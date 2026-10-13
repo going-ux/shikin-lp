@@ -19,3 +19,12 @@ description: Analyze, implement and independently verify conversion-focused impr
 - Verification evidence and unverified items
 - Risks and rollback
 - Next measurable experiment
+
+## Reusable lessons from other projects
+1. **Offer research before copy:** Build a provider evidence matrix with source, retrieval date, advertiser permission, business-type eligibility, fees, funding timing, required documents, notification rules, reward, approval rate, EPC, conversion event and restrictions. Mark unknowns explicitly.
+2. **Unit economics:** Estimate allowable CPA from verified reward × approval probability, then deduct expected ad cost and any other costs. Treat this as a model until measured. Start with a controlled small-budget test, not an assumed profitable campaign.
+3. **Design continuity:** Compare each iteration to the approved blue/white/yellow direction and headline. Maintain clear construction-specific visuals, a dated payment timeline and restrained mobile information density.
+4. **Independent research tracks:** Investigate offer rules and existing code separately when possible; merge evidence into one implementation plan. Never substitute generic market claims for provider-specific verification.
+5. **Verification first:** State exact completion conditions and how to verify them before implementation. Do not treat an AI screenshot impression as device/browser testing.
+6. **Feedback capture:** After each meaningful review, write problem → observed evidence → root cause hypothesis → updated rule/check → verification → remaining uncertainty.
+7. **Transfer carefully:** Reuse general patterns from WordPress and construction-app work (staged rollout, backups, real-environment checks) but do not copy unrelated project-specific requirements into this LP.
