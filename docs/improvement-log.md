@@ -36,3 +36,11 @@
 - Rollback: restore the empty measurementId in assets/config.js. Next: verify production receipt in GA4 Realtime/DebugView after deployment and review enhanced measurement before buying traffic.
 - Review branch: feat/ga4-connection. External link events record clicks only; destination loading, applications and A8 outcomes are separate. Confirm applications and approvals in A8, never count a click as an approved outcome.
 - Handoff: use this repository as the shared source of current state, decisions, uncertainties and next tasks; do not assume conversations are automatically shared. Read AGENTS.md and the latest development history at task start, then update changes, test results, unverified items and next tasks at completion. Production deployment remains pending review.
+
+## 2026-10-14 — PR #4 standard page_view correction
+- Replaced lp_view with one manual standard page_view at initial execution, retaining send_page_view:false and query/fragment-free page_location. No HTML/CSS or publication setting changes.
+- Added scripts/test-ga4.cjs using the actual config and analytics connector: PASS single tag/config, one page_view after interactions, zero lp_view, one selection/internal CTA/external click each, expansion event, sanitized URLs and privacy text. Existing UI tests, static checks and JS syntax PASS.
+- Initial test failure came from cross-VM array prototypes in deepStrictEqual; normalize arrays in the host realm and rerun passed. No application failure was observed.
+- Updated docs/measurement.md and docs/ga4-review.md. GitHub API rejected PR body editing with Forbidden; the revised body is retained in docs/ga4-review.md for manual update.
+- NOT VERIFIED: network delivery, GA4 Realtime/DebugView receipt, enhanced measurement and navigation-time delivery, real-device layout, A8 attribution. External click events are not applications or approved outcomes.
+- Next: copy docs/ga4-review.md into PR #4's description, review before merge, then verify production GA4 receipt. Production is not deployed by this change.
