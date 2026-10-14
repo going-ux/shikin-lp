@@ -42,5 +42,5 @@
     const contact=document.getElementById('contact');contact.textContent='掲載内容に関するお問い合わせ：';
     const link=document.createElement('a');link.href='mailto:'+config.contactEmail;link.textContent=config.contactEmail;contact.appendChild(link);
   }
-  render();track('lp_view');
+  render();track('page_view');
 })();
