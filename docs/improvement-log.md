@@ -23,3 +23,5 @@
 - Acceptance recorded before coding in docs/acceptance-20261014-v2.md. PASS: static targets/assets/CNAME, JS syntax, audience/expand/reset/event unit tests, whitespace.
 - Three-width iframe QA surface added; browser evidence to follow. No CV uplift or realized profit claim.
 - Public ASP/private account statistics are deliberately not copied into this public repository.
+- Live 320/375/390px iframe browser QA: no horizontal overflow; individual 3, corporate 3, expansion 5 and reset 3 verified through real clicks at all widths. Fixed observed 320px headline/CTA wrapping in follow-up. Iframes have desktop scrollbar (15px), so effective content widths are 305/360/375; actual touch-device safe area remains unverified.
+- Added offline normalized-cohort profit aggregation. Synthetic check confirms contribution, approved CPA and pending exclusion; actual ASP/ad data unavailable.
