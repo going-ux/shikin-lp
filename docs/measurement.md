@@ -27,3 +27,8 @@ Break-even CPC = application CVR × approval rate × reward per approved outcome
 
 ## First experiment (not active)
 Only after launch gates pass: baseline approved headline vs same headline plus shorter benefit explanation; one change only, stable random 50/50 assignment, experiment/variant attached to allowed ASP sub-ID. Primary metric: approved contribution per ad click; guardrails: approval rate, approved CPA. Predetermine minimum meaningful effect, sample size from baseline rates, decision window and ASP maturity period. Avoid stopping early on outbound clicks. With low volume, gather a baseline before splitting traffic. Comparison order remains unranked until an explicit experiment.
+
+## v2 connection instructions
+Set assets/config.js measurementId to the user's authorized GA4 G-ID. Collector is disabled until a valid ID is set; no property has been created. lp_view is the entry event (automatic page_view disabled), compare_click is internal navigation, provider_outbound is official navigation, comparison_expand is secondary. Do not mark provider_outbound as an application conversion.
+Review GA4 web stream enhanced measurement: disable outbound automatic events, URL/query collection and form collection as needed to prevent duplication and financial data leakage. The custom event explicitly sends query-free page_location. Privacy copy updates on activation, but retention/data processing choices still require configuration and actual network/debug verification.
+Use permitted fixed campaign codes and ASP variant sub-IDs only after affiliate terms confirm support. Currently no attribution IDs are collected or appended. Approved reporting still needs private ad and ASP exports; never commit these to the public repo.

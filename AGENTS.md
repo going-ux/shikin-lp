@@ -7,7 +7,7 @@ Build a mobile-first landing page for Japanese sole proprietors and small constr
 - Domain: shikin.diggworks.com (GitHub Pages).
 - Core copy: 「仕事はある。売上もある。でも、入金はまだ先。」
 - Visual identity: blue, white and yellow; use craftspeople and actual jobsite context, not generic site managers.
-- Flow: empathy → payment timing mismatch → factoring explanation → company/sole proprietor choice → verified comparison of QuQuMo, アクセルファクター and No.1 → FAQ → CTA.
+- Flow: empathy → payment timing mismatch → factoring explanation → company/sole proprietor choice → eligible provider comparison (initially three per audience, expandable corporate alternatives; no fixed total count) → FAQ → CTA.
 - Communicate the offer clearly within approximately five seconds on mobile.
 - Never invent fees, approval rates, payout timing, customer testimonials, rankings or affiliate program conditions. Confirm current terms and advertising permissions before publishing.
 - Disclose advertising/affiliate relationships and explain factoring costs, eligibility and risks accurately.

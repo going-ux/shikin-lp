@@ -14,3 +14,12 @@
 - Added docs/audit-20261014.md and docs/measurement.md with strict estimated 49/100 readiness, ASP/collector/contact/device blockers, revenue formulas and first experiment gates.
 - Static checks, JS syntax and whitespace PASS. Changed-page mobile/browser/field-speed/ASP tracking NOT VERIFIED.
 - Lesson: a populated dataLayer is not collected analytics, outbound is not a lead, official links are not affiliate revenue. Keep these distinctions in release reviews.
+
+## 2026-10-14 — v2 audience comparison and launch preparation
+- User approved flexible provider count and public-page improvements; header domain replaced by site name and visible PR explanation.
+- Individual primary: QuQuMo/Accel/support organization. Corporate primary: QuQuMo/Accel/Mynavi; expandable support organization/TRY. Official links only; affiliate approvals/issued URLs are still pending.
+- Public content adds operator, selection criteria/source date, privacy/risk text. Verified public inbox missing: contact remains incomplete, no invented email.
+- GA4 connector implemented behind empty measurementId; user confirmed GA4 not created. Collector delivery NOT VERIFIED. Added advertising test proposal (¥10,000 cap, not authorized spend) and launch stop rules.
+- Acceptance recorded before coding in docs/acceptance-20261014-v2.md. PASS: static targets/assets/CNAME, JS syntax, audience/expand/reset/event unit tests, whitespace.
+- Three-width iframe QA surface added; browser evidence to follow. No CV uplift or realized profit claim.
+- Public ASP/private account statistics are deliberately not copied into this public repository.
