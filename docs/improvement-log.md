@@ -28,3 +28,11 @@
 
 ## 2026-10-14 — Operator contact
 - User specified info@diggworks.com (corrected from shikin@). Added mailto link in static HTML and config, including JavaScript-disabled fallback. Delivery has not been tested; no email sent.
+
+## 2026-10-14 — User-provided GA4 measurement ID
+- Configured G-JGJTNJHVZ5 through the existing connector; no duplicate inline Google tag added. Acceptance: one tag/config, automatic page_view disabled, existing lp_view and outbound events retained, query-free custom page_location and activated privacy disclosure.
+- PASS: static checks, existing audience/event tests, JavaScript syntax, and isolated GA-enabled execution covering tag/config uniqueness, lp_view, outbound event and privacy text.
+- NOT VERIFIED: Google script loading in a real browser, actual GA4 receipt, enhanced-measurement settings, navigation-time delivery, and ASP attribution. No push or production publication performed. Earlier empty-ID statements describe historical status.
+- Rollback: restore the empty measurementId in assets/config.js. Next: verify production receipt in GA4 Realtime/DebugView after deployment and review enhanced measurement before buying traffic.
+- Review branch: feat/ga4-connection. External link events record clicks only; destination loading, applications and A8 outcomes are separate. Confirm applications and approvals in A8, never count a click as an approved outcome.
+- Handoff: use this repository as the shared source of current state, decisions, uncertainties and next tasks; do not assume conversations are automatically shared. Read AGENTS.md and the latest development history at task start, then update changes, test results, unverified items and next tasks at completion. Production deployment remains pending review.
