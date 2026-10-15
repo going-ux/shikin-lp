@@ -52,3 +52,11 @@
 - NOT VERIFIED: direct public asset content. Requests to https://shikin.diggworks.com/assets/config.js and assets/analytics.js were rejected by this environment's network route with 403; an escalated read also returned 403. This does not establish a website failure. Deployed filesystem/content equality cannot be claimed from workflow success alone.
 - NOT VERIFIED: actual GA4 Realtime/DebugView receipt; no authenticated GA4 administration/browser capability is available. No synthetic production events were sent to substitute for real browser reception. Applications and approvals remain separate A8 checks.
 - Next: from an accessible browser check public config contains G-JGJTNJHVZ5 and analytics contains track('page_view') with send_page_view:false; visit the LP, operate selection/internal CTA/external link, and confirm GA4 receives page_view once and the corresponding events. Review enhanced measurement for additional automatic page views/outbound events. Record the observed results here; do not claim receipt or approved outcomes until verified.
+
+
+## 2026-10-15 — 共通ドキュメント管理基盤
+- README、docs 全体、AGENTS.md、Git 履歴と main 4566158 を確認。Chat・Work・Codex の引き継ぎ先をリポジトリに統一し、README から project-state.md / handoff.md / 既存履歴へ案内。
+- project-state.md に現状・事業決定・提案・未解決事項・次の作業を集約し、詳細の計測／広告／監査文書は再利用。handoff.md に開始・完了時の更新手順と証拠の扱いを記載。GA4 review は履歴として明示し、measurement.md の古い未接続・レビュー待ち記述を訂正。
+- GA4 は実装済み・ローカルテスト成功・対象コミットのデプロイ成功と、公開ファイル一致／送信／本番受信未確認を分離。利用者共有画面の0人表示は観測にとどめ、原因・成功を推測しない。
+- 文書のみの変更。コード、デザイン、GA4 設定、AGENTS.md、CNAME、公開設定は変更なし。文書リンクと差分を確認し、アプリテストは変更対象外のため再実行しない。
+- 次: この文書ブランチをレビュー後に統合し、公開ファイルと GA4 実受信の切り分けを進める。文書ブランチは main 未反映で、今回マージ／公開操作は行わない。
