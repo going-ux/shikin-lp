@@ -1,0 +1,221 @@
+[
+  {
+    "width": 320,
+    "before": {
+      "scrollWidth": 320,
+      "viewport": 320,
+      "sectionHeight": 316.59375,
+      "stickyHeight": 67,
+      "steps": [
+        {
+          "x": 20,
+          "y": 319.875,
+          "width": 88.65625,
+          "height": 66
+        },
+        {
+          "x": 115.65625,
+          "y": 319.875,
+          "width": 88.671875,
+          "height": 66
+        },
+        {
+          "x": 211.328125,
+          "y": 319.875,
+          "width": 88.671875,
+          "height": 66
+        }
+      ],
+      "events": [
+        "page_view",
+        "compare_click",
+        "business_type_select",
+        "comparison_expand",
+        "business_type_select",
+        "provider_outbound"
+      ],
+      "pageErrors": []
+    },
+    "after": {
+      "scrollWidth": 320,
+      "viewport": 320,
+      "sectionHeight": 641.15625,
+      "stickyHeight": 67,
+      "steps": [
+        {
+          "x": 20,
+          "y": 196.265625,
+          "width": 280,
+          "height": 83.796875
+        },
+        {
+          "x": 20,
+          "y": 302.0625,
+          "width": 280,
+          "height": 83.796875
+        },
+        {
+          "x": 20,
+          "y": 407.859375,
+          "width": 280,
+          "height": 83.796875
+        }
+      ],
+      "events": [
+        "page_view",
+        "compare_click",
+        "business_type_select",
+        "comparison_expand",
+        "business_type_select",
+        "provider_outbound"
+      ],
+      "pageErrors": []
+    }
+  },
+  {
+    "width": 375,
+    "before": {
+      "scrollWidth": 375,
+      "viewport": 375,
+      "sectionHeight": 316.59375,
+      "stickyHeight": 67,
+      "steps": [
+        {
+          "x": 20,
+          "y": 319.5625,
+          "width": 107,
+          "height": 66
+        },
+        {
+          "x": 134,
+          "y": 319.5625,
+          "width": 107,
+          "height": 66
+        },
+        {
+          "x": 248,
+          "y": 319.5625,
+          "width": 107,
+          "height": 66
+        }
+      ],
+      "events": [
+        "page_view",
+        "compare_click",
+        "business_type_select",
+        "comparison_expand",
+        "business_type_select",
+        "provider_outbound"
+      ],
+      "pageErrors": []
+    },
+    "after": {
+      "scrollWidth": 375,
+      "viewport": 375,
+      "sectionHeight": 641.15625,
+      "stickyHeight": 67,
+      "steps": [
+        {
+          "x": 20,
+          "y": 195.953125,
+          "width": 335,
+          "height": 83.796875
+        },
+        {
+          "x": 20,
+          "y": 301.75,
+          "width": 335,
+          "height": 83.796875
+        },
+        {
+          "x": 20,
+          "y": 407.546875,
+          "width": 335,
+          "height": 83.796875
+        }
+      ],
+      "events": [
+        "page_view",
+        "compare_click",
+        "business_type_select",
+        "comparison_expand",
+        "business_type_select",
+        "provider_outbound"
+      ],
+      "pageErrors": []
+    }
+  },
+  {
+    "width": 390,
+    "before": {
+      "scrollWidth": 390,
+      "viewport": 390,
+      "sectionHeight": 316.59375,
+      "stickyHeight": 67,
+      "steps": [
+        {
+          "x": 20,
+          "y": 319.5,
+          "width": 112,
+          "height": 66
+        },
+        {
+          "x": 139,
+          "y": 319.5,
+          "width": 112,
+          "height": 66
+        },
+        {
+          "x": 258,
+          "y": 319.5,
+          "width": 112,
+          "height": 66
+        }
+      ],
+      "events": [
+        "page_view",
+        "compare_click",
+        "business_type_select",
+        "comparison_expand",
+        "business_type_select",
+        "provider_outbound"
+      ],
+      "pageErrors": []
+    },
+    "after": {
+      "scrollWidth": 390,
+      "viewport": 390,
+      "sectionHeight": 620.765625,
+      "stickyHeight": 67,
+      "steps": [
+        {
+          "x": 20,
+          "y": 205.890625,
+          "width": 350,
+          "height": 83.796875
+        },
+        {
+          "x": 20,
+          "y": 311.6875,
+          "width": 350,
+          "height": 83.796875
+        },
+        {
+          "x": 20,
+          "y": 417.484375,
+          "width": 350,
+          "height": 83.796875
+        }
+      ],
+      "events": [
+        "page_view",
+        "compare_click",
+        "business_type_select",
+        "comparison_expand",
+        "business_type_select",
+        "provider_outbound"
+      ],
+      "pageErrors": []
+    }
+  }
+]
