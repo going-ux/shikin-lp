@@ -52,3 +52,15 @@
 - NOT VERIFIED: direct public asset content. Requests to https://shikin.diggworks.com/assets/config.js and assets/analytics.js were rejected by this environment's network route with 403; an escalated read also returned 403. This does not establish a website failure. Deployed filesystem/content equality cannot be claimed from workflow success alone.
 - NOT VERIFIED: actual GA4 Realtime/DebugView receipt; no authenticated GA4 administration/browser capability is available. No synthetic production events were sent to substitute for real browser reception. Applications and approvals remain separate A8 checks.
 - Next: from an accessible browser check public config contains G-JGJTNJHVZ5 and analytics contains track('page_view') with send_page_view:false; visit the LP, operate selection/internal CTA/external link, and confirm GA4 receives page_view once and the corresponding events. Review enhanced measurement for additional automatic page views/outbound events. Record the observed results here; do not claim receipt or approved outcomes until verified.
+
+## 2026-10-15 — 案件・検索市場・収益調査（公開資料）
+
+- 参照main: 45661589537a76794f62c3577bb8c946ff1f033c。
+- docs/affiliate-research-20261015.mdを追加。既存実装、案件別の確認課題、新規候補、検索意図、月1万/3万/5万/10万円の仮定試算、出稿前の条件、Codexへの実装依頼を記録。
+- A8は認証後に管理画面を一度確認したが、その後再認証へ戻った。申込中データなしという表示だけでは承認/否認を判定できない。最新案件条件・提携状態・EPC・確定率は未確認。
+- アクセルの個人対応とマイナビの金額条件について公式窓口間の違いを記録。指定広告LPとASP成果条件の照合を次の必須作業とした。
+- A8の非公開報酬・統計や認証情報を公開リポジトリへ掲載していない。公式に公開されたFREENANCE直接紹介制度はA8と区別して記録。
+- GA4 ID設定は現行コードで確認。実受信は未確認。公開LPのウェブ取得エラーをサイト障害やデプロイ失敗とは扱っていない。
+- 検証: 数式・全予算ケースをJavaScriptで再計算、CPC/CTR/CVR等の仮定表示と出典をレビュー。資料のみのためUI/静的機能テストは今回未実行。
+- 本番UI、広告リンク、GA4設定、CNAME、公開設定は変更なし。広告の開始・提携申請・問い合わせ送信は未実施。
+- 次回: A8現条件の非公開台帳 → 広告許可/指定LP整合 → Keyword Planner実数 → 計測帰属確認 → 停止条件付きの初回テスト判断。
