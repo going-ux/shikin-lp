@@ -22,7 +22,7 @@
 - page_view 1回、内部CTAと比較表示到達を別々に検証。スクロール・直接アンカーでも表示を記録し、一訪問中の再表示で重複しない。
 - 既存イベント名を維持。カスタムpage_locationにquery/fragmentを含めず、個人情報を追加しない。
 - 変更前後画像・差分・テスト結果を記録。コード、ローカル発火、GA4実受信、A8帰属を分離。
-- mainマージ・デプロイ・広告出稿・A8申請・問い合わせ送信なし。承認前に公開リポジトリへの新規pushも行わない。
+- mainマージ・デプロイ・広告出稿・A8申請・問い合わせ送信なし。承認前に公開リポジトリへの新規pushも行わない（後に利用者がコード・画像のブランチ共有のみ承認）。
 
 ## 未確認・承認待ち
 
@@ -85,7 +85,7 @@ GA4拡張計測による追加イベント、referrer等を含むGoogle側の自
 | 375px | [前](evidence/implementation-20261016/before-full-375.png) | [後](evidence/implementation-20261016/after-full-375.png) | [図](evidence/implementation-20261016/after-cycle-375.png) / [紹介](evidence/implementation-20261016/after-provider-375.png) |
 | 390px | [前](evidence/implementation-20261016/before-full-390.png) | [後](evidence/implementation-20261016/after-full-390.png) | [図](evidence/implementation-20261016/after-cycle-390.png) / [紹介](evidence/implementation-20261016/after-provider-390.png) |
 
-[コード差分](evidence/implementation-20261016/changes.patch) / [ブラウザ検査結果](evidence/implementation-20261016/results.json)。スクリーンショットはローカル成果物であり外部プレビューではない。一般公開URLへのpush・PR・Pages公開は実施しない。
+[コード差分](evidence/implementation-20261016/changes.patch) / [ブラウザ検査結果](evidence/implementation-20261016/results.json)。スクリーンショットはローカル成果物であり外部プレビューではない。利用者承認によりコード・画像をGitHubの作業ブランチで共有する。Pages公開・mainマージ・広告配信は行わない。
 
 ## 再確認手順
 
