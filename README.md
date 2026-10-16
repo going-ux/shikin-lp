@@ -9,3 +9,5 @@ Chat・Work・Codex 共通の引き継ぎ先はこのリポジトリです。会
 - [開発・改善履歴](docs/improvement-log.md)
 
 本番: https://shikin.diggworks.com/ （GitHub Pages）。GA4 の実装・テスト・デプロイ・本番受信は別々に確認します。
+
+このローカル開発ブランチの単社試作は [実装・検証レポート](docs/implementation-review-20261016.md) を参照。本番には反映していません。

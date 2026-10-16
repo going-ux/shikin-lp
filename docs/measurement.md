@@ -38,3 +38,8 @@ scripts/profit-report.py accepts a normalized, private cohort CSV (not direct ve
 
 ## PR #4 implementation and deployment
 User-provided G-JGJTNJHVZ5 is configured. Initial page_view is sent manually once; automatic page_view remains disabled. This replaces the previous lp_view event. scripts/test-ga4.cjs verifies queued GA4 commands and query-free page_location, not network delivery or GA4 receipt. Earlier no-collector/no-ID statements describe the pre-connection baseline. PR #4 was merged; Pages run #12 succeeded for eb9ac00. Real receipt and direct public content verification remain unconfirmed; see project-state.md.
+
+
+## 2026-10-16 local development prototype (not deployed)
+
+feat/lp-brief-20261016 is a local single-provider prototype, not the production state described above. It adds compare_view once when at least half the service heading is visible (bottom 90px excluded); compare_click remains the internal CTA operation. A disabled preview CTA generates cta_click with link_kind=disabled and disabled=true, never provider_outbound. Single-provider visitors have business_type=unspecified and no business-type selection is required. Existing selection/expansion/outbound event names remain compatible for the retained multi-provider mode. See [implementation review](implementation-review-20261016.md) for the event table and browser evidence. Network delivery, full GA4 receipt and A8 attribution remain unverified.

@@ -1,0 +1,245 @@
+diff --git a/assets/analytics.js b/assets/analytics.js
+index 6d9078c..7077638 100644
+--- a/assets/analytics.js
++++ b/assets/analytics.js
+@@ -18 +18 @@
+-    const payload = {...fields, business_type:businessType, experiment_id:'baseline', variant:'A', page_version:config.pageVersion || 'v2', page_location:location.origin + location.pathname};
++    const payload = {...fields, business_type:sameAudience?'unspecified':businessType, experiment_id:'baseline', variant:'A', page_version:config.pageVersion || 'v2', page_location:location.origin + location.pathname};
+@@ -23,0 +24,4 @@
++  const cards = Array.from(document.querySelectorAll('[data-card]'));
++  const active = card => Array.isArray(config.activeProviders) ? config.activeProviders.includes(card.dataset.card) : card.dataset.releaseState !== 'pending';
++  const eligibleFor = type => cards.filter(card => active(card) && card.dataset.audience.split(' ').includes(type));
++  const sameAudience = eligibleFor('individual').map(card => card.dataset.card).join(',') === eligibleFor('corporate').map(card => card.dataset.card).join(',');
+@@ -27 +31 @@
+-    document.querySelectorAll('[data-card]').forEach(card => {
++    cards.forEach(card => {
+@@ -29 +33 @@
+-      card.hidden = !eligible || (!primary[businessType].includes(card.dataset.card) && !expanded);
++      card.hidden = !active(card) || !eligible || (!primary[businessType].includes(card.dataset.card) && !expanded);
+@@ -32 +36,2 @@
+-    more.hidden = businessType !== 'corporate';
++    const extraCount = eligibleFor(businessType).filter(card => !primary[businessType].includes(card.dataset.card)).length;
++    more.hidden = businessType !== 'corporate' || extraCount === 0;
+@@ -34,2 +39,3 @@
+-    more.textContent = expanded ? '追加候補を閉じる' : '法人向けの追加候補を見る（2社）';
+-    document.getElementById('choice-note').textContent = businessType==='individual' ? '個人事業主に対応する3社を表示しています。各社で売掛金・請求書の条件を確認してください。' : '法人向けの3社を表示しています。ほかの2社も追加して比較できます。';
++    more.textContent = expanded ? '追加候補を閉じる' : `法人向けの追加候補を見る（${extraCount}社）`;
++    const visibleCount = cards.filter(card => !card.hidden).length;
++    document.getElementById('choice-note').textContent = sameAudience ? '個人事業主・法人向けのサービス紹介です。対象となる請求書や必要書類などの条件を確認してください。' : `${businessType==='individual'?'個人事業主':'法人'}向けの${visibleCount}社を表示しています。各社の条件を確認してください。`;
+@@ -37 +43 @@
+-  document.querySelector('.choice').hidden=false;
++  document.querySelector('.choice').hidden=sameAudience;
+@@ -40 +46,8 @@
+-  document.querySelectorAll('[data-track]').forEach(link=>link.addEventListener('click',()=>track(link.dataset.provider?'provider_outbound':'compare_click',{cta_id:link.dataset.track,provider:link.dataset.provider||'none',link_kind:link.dataset.provider?'official':'internal'})));
++  document.querySelectorAll('[data-track]').forEach(link=>link.addEventListener('click',event=>{
++    if (link.dataset.provider && (config.previewMode || link.dataset.previewCta)) {
++      event.preventDefault();
++      track('cta_click',{cta_id:link.dataset.track,provider:link.dataset.provider,link_kind:'disabled',disabled:true});
++      return;
++    }
++    track(link.dataset.provider?'provider_outbound':'compare_click',{cta_id:link.dataset.track,provider:link.dataset.provider||'none',link_kind:link.dataset.provider?'official':'internal'});
++  }));
+@@ -45,0 +59,14 @@
++  // A click on an anchor is not proof that the service section was displayed.
++  // Observe the heading rather than the entire (potentially very tall) section.
++  const compareHeading = document.querySelector('#compare h2');
++  if (compareHeading && typeof IntersectionObserver === 'function') {
++    let viewed = false;
++    const observer = new IntersectionObserver(entries => {
++      if (!viewed && entries.some(entry => entry.target === compareHeading && entry.isIntersecting && entry.intersectionRatio >= 0.5)) {
++        viewed = true;
++        track('compare_view', {section_id:'compare'});
++        observer.disconnect();
++      }
++    }, {threshold:0.5, rootMargin:'0px 0px -90px 0px'});
++    observer.observe(compareHeading);
++  }
+diff --git a/assets/config.js b/assets/config.js
+index 06c5c49..9f0e4ed 100644
+--- a/assets/config.js
++++ b/assets/config.js
+@@ -5 +5,3 @@ window.LP_CONFIG = {
+-  pageVersion: '20261014-v2'
++  pageVersion: '20261016-dev',
++  activeProviders: ['ququmo'], // Other provider records are retained, not approved for display.
++  previewMode: true // No live external delivery in this development prototype.
+diff --git a/index.html b/index.html
+index 51db063..33e0211 100644
+--- a/index.html
++++ b/index.html
+@@ -1 +1 @@
+-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07346b"><meta name="description" content="建設業の入金待ちに。請求書を使った資金調達サービスを比較。個人事業主・法人の方へ。"><title>建設業の入金・資金繰りガイド</title><style>
++<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07346b"><meta name="description" content="建設業の入金待ちに。QuQuMoの利用条件を確認。個人事業主・法人の方へ。"><title>建設業の入金・資金繰りガイド</title><style>
+@@ -6 +6,4 @@ header strong{display:block;font-size:17px;line-height:1.5}header small{margin-t
+-</style></head><body><a class="skip" href="#compare">比較へ進む</a><div class="wrap"><header><strong>建設業の入金・資金繰りガイド</strong><small>PR：広告掲載を予定した比較サイトです</small></header><main><div class="hero"><div class="eyebrow">一人親方・小規模建設業者の方へ</div><h1>仕事はある。<br>売上もある。<br>でも、<br><span class="yellow">入金はまだ先。</span></h1><p>材料・外注費の支払いが先に。<br>請求書を入金前に資金化する<br>ファクタリングを比較。</p><a class="btn" href="#compare" data-track="hero_compare">サービスの条件を比較する →</a><div class="sub">比較・情報閲覧は無料／利用には審査があります</div></div><section><h2>こんな資金繰りの悩みはありませんか？</h2><div class="cards"><div class="mini"><b>🧱</b>材料費が先</div><div class="mini"><b>👷</b>外注費の支払い</div><div class="mini"><b>📅</b>入金は来月以降</div></div></section><section><h2>建設業は、<br>支払いが先で入金は後。</h2><div class="timeline"><div class="step">今月<br>材料・外注費</div><div class="step">工事完了<br>請求書発行</div><div class="step">翌月以降<br>売掛金入金</div></div><p>仕事があっても、入金までの時間差で資金が不足することがあります。</p></section><section><h2>ファクタリングとは？</h2><p>取引先に対する売掛債権（請求書に基づく代金を受け取る権利）を売却して、入金期日より前に資金化する方法です。</p><p class="note">融資とは仕組みが異なります。手数料・審査・契約条件があり、すべての請求書が対象になるわけではありません。手数料で将来の受取額が減るため、継続利用は資金繰りを悪化させる可能性があります。</p><p class="note">契約前に総費用、実際の受取額、取引先への通知、売掛先が支払えない場合の義務を確認しましょう。支払期日の交渉や金融機関の融資も選択肢です。<a href="https://www.fsa.go.jp/user/factoring.html" rel="noopener">金融庁の注意喚起</a></p></section><section id="compare"><h2>事業形態に合う候補を比較</h2><div class="choice" hidden><button type="button" class="active" data-type="individual" aria-pressed="true">個人事業主</button><button type="button" data-type="corporate" aria-pressed="false">法人</button></div><p class="note" id="choice-note" aria-live="polite">各社の対応対象を確認してください。利用には審査があります。</p><p class="note">掲載順はおすすめ順位ではありません。対応対象・手続き・費用の確認先を同じ項目で比較しています。手数料の下限だけで選ばず、総費用と受取額を比較してください。</p><div id="provider-list"><article class="provider" data-audience="individual corporate" data-card="ququmo"><div class="tag">オンラインで手続きを進めたい方</div><h3>QuQuMo</h3><dl><dt>対象</dt><dd>個人事業主・法人</dd><dt>費用</dt><dd>1%〜。総費用は見積もりで確認</dd><dt>手続き</dt><dd>オンライン完結。請求書・通帳などの必要書類を確認</dd></dl><a href="https://ququmo.com/" data-provider="ququmo" data-track="compare_ququmo" rel="noopener">QuQuMoの公式条件を確認 →</a></article><article class="provider" data-audience="individual corporate" data-card="accel"><div class="tag">担当者に条件を相談したい方</div><h3>アクセルファクター</h3><dl><dt>対象</dt><dd>個人事業主・法人</dd><dt>費用</dt><dd>0.5%〜。契約方式・審査で変動</dd><dt>手続き</dt><dd>書類・電話確認が必要。必要額と売掛金の条件を確認</dd></dl><a href="https://accelfacter.co.jp/service/encashment.php" data-provider="accel" data-track="compare_accel" rel="noopener">アクセルファクターの公式条件を確認 →</a></article><article class="provider" data-audience="corporate" data-card="mynavi"><div class="tag">法人向けの見積もりを比較したい方</div><h3>マイナビブリッジ</h3><dl><dt>対象</dt><dd>法人</dd><dt>費用</dt><dd>申込条件と総費用を公式ページで確認</dd><dt>手続き</dt><dd>本人確認書類などが必要。希望金額に合う申込窓口を確認</dd></dl><a href="https://mynavibridge.jp/asp/factoring" data-provider="mynavi" data-track="compare_mynavi" rel="noopener">マイナビブリッジの公式条件を確認 →</a></article><article class="provider" data-audience="individual corporate" data-card="support"><div class="tag">資金繰りの相談先を比較したい方</div><h3>日本中小企業金融サポート機構</h3><dl><dt>対象</dt><dd>個人事業主・法人</dd><dt>費用</dt><dd>契約方式・見積もりによる</dd><dt>手続き</dt><dd>売掛金の内容・必要書類・契約方法を確認</dd></dl><a href="https://chushokigyo-support.or.jp/support/factoring/" data-provider="support" data-track="compare_support" rel="noopener">日本中小企業金融サポート機構の公式条件を確認 →</a></article><article class="provider" data-audience="corporate" data-card="try"><div class="tag">法人向けの別の相談先も見たい方</div><h3>ファクタリングのTRY</h3><dl><dt>対象</dt><dd>法人向け比較候補</dd><dt>費用</dt><dd>見積もりによる</dd><dt>手続き</dt><dd>売掛金・必要書類を確認し、審査を経て契約</dd></dl><a href="https://www.factoring-try-sko.co.jp/" data-provider="try" data-track="compare_try" rel="noopener">ファクタリングのTRYの公式条件を確認 →</a></article></div><button id="more-providers" type="button" aria-expanded="false" aria-controls="provider-list" hidden>法人向けの追加候補を見る（2社）</button><p class="note">公式情報確認日：2026年10月14日。現在は通常の公式リンクです。申込みは各社サイトで行います。掲載は利用可否・入金を保証するものではありません。</p><noscript><p class="note">JavaScriptが無効なため全候補を表示しています。各カードの対象を確認してください。</p></noscript></section><section class="faq"><h2>よくある質問</h2><details><summary>個人事業主でも利用できますか？</summary><p>対応するサービスがあります。ただし売掛先・請求書・審査条件によって異なります。</p></details><details><summary>ファクタリングは借入ですか？</summary><p>一般的な債権売買型ファクタリングは融資とは異なります。契約内容によって実態が異なる場合があるため確認が必要です。</p></details><details><summary>手数料はどれくらいですか？</summary><p>売掛先や審査内容、契約形態で変わります。見積額だけでなく受取額と契約条件を比較しましょう。</p></details><details><summary>取引先に知られますか？</summary><p>契約方式によって異なります。通知の有無や債権譲渡登記など、事前に確認してください。</p></details></section><section style="background:#07346b;color:white"><h2>入金待ちの不安を、<br><span class="yellow">比較から整理しませんか？</span></h2><a class="btn" href="#compare" data-track="bottom_compare">比較候補を見る →</a></section></main><footer id="operator"><strong>建設業の入金・資金繰りガイド</strong><p>運営：DiggWorks（ディグワークス）</p><p>当サイトは事業者向けの比較情報を提供します。資金調達の申込み・審査・契約は各サービスの運営会社が行います。</p><p>広告について：アフィリエイト広告の掲載を予定しています。成果報酬が発生する場合があります。現在のリンクは通常の公式リンクです。掲載順は優劣や推奨順位を示しません。</p><p id="contact">掲載内容に関するお問い合わせ：<a href="mailto:info@diggworks.com">info@diggworks.com</a></p><details class="policy"><summary>比較基準・情報の出典</summary><p>対象と手続きは各社の公式情報を確認して掲載しています。建設業の入金待ちとの関連、個人事業主・法人の対応、手続きの違いを基準に候補を選定し、報酬額で順位付けしていません。市場のすべてのサービスを網羅するものではありません。</p><p>確認日：2026年10月14日。各カードの公式リンクが出典です。料金・対応は変更される場合があるため、申込み前に最新条件と総費用をご確認ください。</p></details><details class="policy"><summary>プライバシー・免責事項</summary><p>本ページに申込フォームはありません。アクセス計測は未接続です。配信元のGitHub Pagesや移動先のサービスではアクセス情報が処理される場合があります。各社のプライバシーポリシーをご確認ください。</p><p>利用可否、手数料、入金時期は各社の審査・契約によります。掲載情報は確認時点のもので、契約前には最新の公式情報と見積もりを確認してください。</p></details>© 2026 DiggWorks</footer></div><div class="sticky"><a href="#compare" data-track="sticky_compare">対象に合うサービスを比較する →</a></div><script src="assets/config.js" defer></script><script src="assets/analytics.js" defer></script></body></html>
+\ No newline at end of file
++
++.payment-cycle{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;list-style:none;padding:0}.payment-cycle .step{position:relative;display:flex;gap:12px;align-items:flex-start;text-align:left;padding:16px;font-size:14px}.cycle-number{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:50%;background:#07346b;color:white;font-size:14px}.payment-cycle .step:last-child{background:#fff8d6}.payment-cycle .step strong{display:block;font-size:16px;line-height:1.5}.payment-cycle .step div{min-width:0}.payment-cycle .step div>span{display:block;margin-top:4px;font-weight:400;line-height:1.7}.payment-cycle .step:not(:last-child)::after{content:"↓";position:absolute;left:26px;bottom:-23px;line-height:22px;color:#07346b;font-size:18px}
++.provider-preview{display:block;width:100%;border:0;background:#ffdf24;color:#14283d;border-radius:30px;padding:14px;text-align:center;font:inherit;font-size:14px;font-weight:900;cursor:not-allowed;overflow-wrap:anywhere}
++</style></head><body><a class="skip" href="#compare">サービス情報へ進む</a><div class="wrap"><header><strong>建設業の入金・資金繰りガイド</strong><small>PR：サービス紹介ページです（開発試作）</small></header><main><div class="hero"><div class="eyebrow">一人親方・小規模建設業者の方へ</div><h1>仕事はある。<br>売上もある。<br>でも、<br><span class="yellow">入金はまだ先。</span></h1><p>材料・外注費の支払いが先に。<br>請求書を入金前に資金化する<br>ファクタリングの条件を確認。</p><a class="btn" href="#compare" data-track="hero_compare">QuQuMoの利用条件を見る →</a><div class="sub">情報閲覧は無料／利用には審査・手数料があります</div></div><section><h2>こんな資金繰りの悩みはありませんか？</h2><div class="cards"><div class="mini"><b>🧱</b>材料費が先</div><div class="mini"><b>👷</b>外注費の支払い</div><div class="mini"><b>📅</b>入金は来月以降</div></div></section><section><h2>建設業は、<br>支払いが先で入金は後。</h2><p class="note">支払いと入金のズレの一例です。</p><ol class="timeline payment-cycle" aria-label="支払いから入金までの流れ"><li class="step"><span class="cycle-number" aria-hidden="true">1</span><div><strong>工事中の支払い</strong><span>材料費・応援職人への支払い。</span></div></li><li class="step"><span class="cycle-number" aria-hidden="true">2</span><div><strong>工事完了・請求</strong><span>請求書を発行して入金待ち。</span></div></li><li class="step"><span class="cycle-number" aria-hidden="true">3</span><div><strong>契約上の支払日に入金</strong><span>取引先から売掛金を受け取る。</span></div></li></ol><p class="note">※一例です。支払い・入金の時期は契約によって異なります。</p><p>仕事があっても、入金までの時間差で資金が不足することがあります。</p></section><section><h2>ファクタリングとは？</h2><p>取引先に対する売掛債権（請求書に基づく代金を受け取る権利）を売却して、入金期日より前に資金化する方法です。</p><p class="note">融資とは仕組みが異なります。手数料・審査・契約条件があり、すべての請求書が対象になるわけではありません。手数料で将来の受取額が減るため、継続利用は資金繰りを悪化させる可能性があります。</p><p class="note">契約前に総費用、実際の受取額、取引先への通知、売掛先が支払えない場合の義務を確認しましょう。支払期日の交渉や金融機関の融資も選択肢です。<a href="https://www.fsa.go.jp/user/factoring.html" rel="noopener">金融庁の注意喚起</a></p></section><section id="compare"><h2>QuQuMoの利用条件を確認</h2><div class="choice" hidden><button type="button" class="active" data-type="individual" aria-pressed="true">個人事業主</button><button type="button" data-type="corporate" aria-pressed="false">法人</button></div><p class="note" id="choice-note" aria-live="polite">個人事業主・法人向けのサービス紹介です。利用には審査があります。</p><p class="note">現在はQuQuMo 1社の紹介です。ランキングや複数社の比較ではありません。総費用と実際の受取額、契約条件を確認してください。</p><div id="provider-list"><article class="provider" data-audience="individual corporate" data-card="ququmo"><div class="tag">利用前に条件を確認したい方</div><h3>QuQuMo</h3><dl><dt>対象</dt><dd>個人事業主・法人</dd><dt>費用</dt><dd>総費用と受取額を最新情報で確認</dd><dt>手続き</dt><dd>必要書類・申込手順を最新情報で確認</dd></dl><button class="provider-preview" type="button" data-provider="ququmo" data-track="compare_ququmo" data-preview-cta="true" data-public-url="https://ququmo.com/" aria-disabled="true">QuQuMoの利用条件・見積方法を確認（試作）</button><p class="note">開発試作：ボタンを押しても外部サイトへ移動しません。</p></article><article class="provider" data-audience="individual corporate" data-card="accel" data-release-state="pending" hidden><div class="tag">担当者に条件を相談したい方</div><h3>アクセルファクター</h3><dl><dt>対象</dt><dd>個人事業主・法人</dd><dt>費用</dt><dd>0.5%〜。契約方式・審査で変動</dd><dt>手続き</dt><dd>書類・電話確認が必要。必要額と売掛金の条件を確認</dd></dl><a href="https://accelfacter.co.jp/service/encashment.php" data-provider="accel" data-track="compare_accel" rel="noopener">アクセルファクターの公式条件を確認 →</a></article><article class="provider" data-audience="corporate" data-card="mynavi" data-release-state="pending" hidden><div class="tag">法人向けの見積もりを比較したい方</div><h3>マイナビブリッジ</h3><dl><dt>対象</dt><dd>法人</dd><dt>費用</dt><dd>申込条件と総費用を公式ページで確認</dd><dt>手続き</dt><dd>本人確認書類などが必要。希望金額に合う申込窓口を確認</dd></dl><a href="https://mynavibridge.jp/asp/factoring" data-provider="mynavi" data-track="compare_mynavi" rel="noopener">マイナビブリッジの公式条件を確認 →</a></article><article class="provider" data-audience="individual corporate" data-card="support" data-release-state="pending" hidden><div class="tag">資金繰りの相談先を比較したい方</div><h3>日本中小企業金融サポート機構</h3><dl><dt>対象</dt><dd>個人事業主・法人</dd><dt>費用</dt><dd>契約方式・見積もりによる</dd><dt>手続き</dt><dd>売掛金の内容・必要書類・契約方法を確認</dd></dl><a href="https://chushokigyo-support.or.jp/support/factoring/" data-provider="support" data-track="compare_support" rel="noopener">日本中小企業金融サポート機構の公式条件を確認 →</a></article><article class="provider" data-audience="corporate" data-card="try" data-release-state="pending" hidden><div class="tag">法人向けの別の相談先も見たい方</div><h3>ファクタリングのTRY</h3><dl><dt>対象</dt><dd>法人向け比較候補</dd><dt>費用</dt><dd>見積もりによる</dd><dt>手続き</dt><dd>売掛金・必要書類を確認し、審査を経て契約</dd></dl><a href="https://www.factoring-try-sko.co.jp/" data-provider="try" data-track="compare_try" rel="noopener">ファクタリングのTRYの公式条件を確認 →</a></article></div><button id="more-providers" type="button" aria-expanded="false" aria-controls="provider-list" hidden>法人向けの追加候補を見る（2社）</button><p class="note">開発確認日：2026年10月16日。最新の公式条件は再取得できていません。外部送客は停止中で、この試作から申込みはできません。提携・広告掲載の許可や成果帰属を保証するものではありません。</p><noscript><p class="note">JavaScriptが無効なため操作計測は行いません。QuQuMoの紹介のみ表示しています。外部送客は停止中です。</p></noscript></section><section class="faq"><h2>よくある質問</h2><details><summary>個人事業主でも利用できますか？</summary><p>対応するサービスがあります。ただし売掛先・請求書・審査条件によって異なります。</p></details><details><summary>ファクタリングは借入ですか？</summary><p>一般的な債権売買型ファクタリングは融資とは異なります。契約内容によって実態が異なる場合があるため確認が必要です。</p></details><details><summary>手数料はどれくらいですか？</summary><p>売掛先や審査内容、契約形態で変わります。見積額だけでなく受取額と契約条件を比較しましょう。</p></details><details><summary>取引先に知られますか？</summary><p>契約方式によって異なります。通知の有無や債権譲渡登記など、事前に確認してください。</p></details></section><section style="background:#07346b;color:white"><h2>入金待ちの不安を、<br><span class="yellow">条件確認から整理しませんか？</span></h2><a class="btn" href="#compare" data-track="bottom_compare">QuQuMoの利用条件を見る →</a></section></main><footer id="operator"><strong>建設業の入金・資金繰りガイド</strong><p>運営：DiggWorks（ディグワークス）</p><p>当サイトは事業者向けのサービス情報を提供します。資金調達の申込み・審査・契約は各サービスの運営会社が行います。</p><p>広告について：アフィリエイト広告の掲載を予定しています。外部送客・成果リンクの稼働には別途確認と承認が必要です。現在の開発試作では外部送客を停止しています。</p><p id="contact">掲載内容に関するお問い合わせ：<a href="mailto:info@diggworks.com">info@diggworks.com</a></p><details class="policy"><summary>掲載方針・情報の出典</summary><p>建設業の入金待ちを整理するため、QuQuMoの利用条件を確認するサービス紹介です。報酬額や手数料の下限で順位付けしていません。他社のデータは将来の検討用として保持していますが、本試作では表示していません。</p><p>過去の公式情報確認日：2026年10月14日。最新条件の再確認は未完了です。公式情報の参照先は https://ququmo.com/ です。公開前には最新の対象条件・総費用・必要書類と広告掲載許可を確認します。</p></details><details class="policy"><summary>プライバシー・免責事項</summary><p>本ページに申込フォームはありません。アクセス計測は未接続です。配信元のGitHub Pagesや移動先のサービスではアクセス情報が処理される場合があります。各社のプライバシーポリシーをご確認ください。</p><p>利用可否、手数料、入金時期は各社の審査・契約によります。この試作は最新条件の確認・外部送客が未完了です。契約前には最新の公式情報と見積もりを確認してください。</p></details>© 2026 DiggWorks</footer></div><div class="sticky"><a href="#compare" data-track="sticky_compare">QuQuMoの利用条件を見る →</a></div><script src="assets/config.js" defer></script><script src="assets/analytics.js" defer></script></body></html>
+\ No newline at end of file
+diff --git a/scripts/check-static.py b/scripts/check-static.py
+index 1dd53c5..c170e2a 100644
+--- a/scripts/check-static.py
++++ b/scripts/check-static.py
+@@ -5 +5 @@ class Page(HTMLParser):
+-        super().__init__(); self.ids=set(); self.links=[]; self.scripts=[]
++        super().__init__(); self.ids=set(); self.links=[]; self.scripts=[]; self.preview=[]; self.cards={}
+@@ -12,0 +13,2 @@ class Page(HTMLParser):
++        if 'data-card' in a: self.cards[a['data-card']]='hidden' in a
++        if tag=='button' and a.get('data-preview-cta')=='true': self.preview.append(a)
+@@ -20,2 +22,5 @@ assert '#links-pending' not in p.links
+-assert len([x for x in p.links if 'ququmo.com' in x])==1
+-print('PASS: internal targets, script assets, CNAME, provider placeholder removal')
++assert not any('ququmo.com' in x for x in p.links), 'prototype must not activate QuQuMo outbound'
++assert len(p.preview)==1 and p.preview[0].get('data-public-url')=='https://ququmo.com/'
++assert p.preview[0].get('aria-disabled')=='true'
++assert p.cards=={'ququmo':False,'accel':True,'mynavi':True,'support':True,'try':True}, 'retain other records hidden even without JS'
++print('PASS: internal targets, assets, CNAME, inactive prototype CTA and hidden retained providers')
+diff --git a/scripts/test-ga4.cjs b/scripts/test-ga4.cjs
+index 3c68e9d..803a159 100644
+--- a/scripts/test-ga4.cjs
++++ b/scripts/test-ga4.cjs
+@@ -10 +10 @@ const buttons = ['individual','corporate'].map(type => element({type}));
+-const more=element(), note=element(), choice=element(), privacy=element(), contact=element(), scripts=[];
++const more=element(), note=element(), choice=element(), privacy=element(), contact=element(), heading=element(), scripts=[];
+@@ -14 +14 @@ const document={head:{appendChild(s){scripts.push(s)}},createElement(){return el
+-  querySelector(s){return s==='.choice'?choice:privacy},
++  querySelector(s){return s==='.choice'?choice:s==='#compare h2'?heading:privacy},
+@@ -17 +17,7 @@ const location={origin:'https://shikin.diggworks.com',pathname:'/',search:'?utm_
+-vm.runInNewContext(fs.readFileSync('assets/analytics.js','utf8'),{window,document,location,CustomEvent:class{}});
++let observation;
++class IntersectionObserver {
++  constructor(callback, options){observation={callback,options,disconnected:false};}
++  observe(target){observation.target=target;}
++  disconnect(){observation.disconnected=true;}
++}
++vm.runInNewContext(fs.readFileSync('assets/analytics.js','utf8'),{window,document,location,IntersectionObserver,CustomEvent:class{}});
+@@ -26,0 +33,4 @@ assert.equal(events()[0][1],'page_view');
++assert.equal(choice.hidden,true);
++assert.equal(more.hidden,true);
++assert.equal(cards.filter(card=>!card.hidden).length,1);
++assert.equal(cards.find(card=>!card.hidden).dataset.card,'ququmo');
+@@ -29,3 +39,4 @@ links[0].handlers.click();
+-links[1].handlers.click();
+-assert.deepEqual(events().map(x=>x[1]),['page_view','business_type_select','compare_click','provider_outbound']);
+-assert.equal(events()[1][2].business_type,'corporate');
++let prevented=false;
++links[1].handlers.click({preventDefault(){prevented=true}});
++assert.deepEqual(events().map(x=>x[1]),['page_view','business_type_select','compare_click','cta_click']);
++assert.equal(events()[1][2].business_type,'unspecified');
+@@ -34 +45,4 @@ assert.equal(events()[3][2].provider,'ququmo');
+-assert.equal(events()[3][2].link_kind,'official');
++assert.equal(events()[3][2].link_kind,'disabled');
++assert.equal(events()[3][2].disabled,true);
++assert.equal(prevented,true);
++assert.equal(events().filter(x=>x[1]==='provider_outbound').length,0);
+@@ -38,0 +53,10 @@ assert.equal(events().filter(x=>x[1]==='lp_view').length,0);
++assert.equal(observation.target,heading);
++assert.equal(events().filter(x=>x[1]==='compare_view').length,0);
++observation.callback([{target:heading,isIntersecting:true,intersectionRatio:0.1}]);
++assert.equal(events().filter(x=>x[1]==='compare_view').length,0);
++observation.callback([{target:heading,isIntersecting:true,intersectionRatio:0.5}]);
++observation.callback([{target:heading,isIntersecting:true,intersectionRatio:1}]);
++assert.equal(events().filter(x=>x[1]==='compare_view').length,1);
++assert.equal(events().at(-1)[2].section_id,'compare');
++assert.equal(observation.disconnected,true);
++assert.equal(events().filter(x=>x[1]==='page_view').length,1);
+@@ -41 +65 @@ assert.ok(privacy.textContent.includes('Google Analytics'));
+-console.log('PASS GA4: one manual page_view, automatic disabled, selection/CTA/outbound/expansion events, query-free URLs, no lp_view');
++console.log('PASS GA4: one page_view, automatic disabled, single-provider/disabled CTA, zero outbound, handler compatibility, compare_view threshold and deduplication, sanitized URLs');
+diff --git a/scripts/test-payment-cycle.cjs b/scripts/test-payment-cycle.cjs
+new file mode 100644
+index 0000000..ca22ea2
+--- /dev/null
++++ b/scripts/test-payment-cycle.cjs
+@@ -0,0 +1,89 @@
++// Run current prototype on 8011 and main 829231f snapshot on 8012.
++// Chromium and Playwright are required; third-party traffic is blocked.
++const {chromium}=require('playwright');
++const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
++const out=path.join(process.cwd(),'docs/evidence/implementation-20261016');
++const events=p=>p.evaluate(()=>window.dataLayer.filter(e=>e[0]==='event').map(e=>({name:e[1],fields:e[2]})));
++const count=(entries,name)=>entries.filter(e=>e.name===name).length;
++(async()=>{
++ fs.mkdirSync(out,{recursive:true});
++ const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
++ const results=[];
++ async function context(width,extras={}){
++  const c=await browser.newContext({viewport:{width,height:780},deviceScaleFactor:1,isMobile:true,hasTouch:true,...extras});
++  await c.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());return c;
++ }
++ try{
++  for(const width of [320,375,390]){
++   const result={width};
++   for(const [version,port] of [['before',8012],['after',8011]]){
++    const c=await context(width),p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
++    await p.goto('http://127.0.0.1:'+port+'/?private=do-not-send#top');await p.evaluate(()=>document.fonts.ready);
++    await p.screenshot({path:path.join(out,version+'-full-'+width+'.png'),fullPage:true});
++    const cycle=p.locator('section').filter({has:p.locator('.timeline')});
++    await cycle.screenshot({path:path.join(out,version+'-cycle-'+width+'.png')});
++    const layout=await p.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
++     steps:[...document.querySelector('.timeline').children].map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})}));
++    assert.equal(layout.width,layout.scrollWidth);
++    if(version==='after'){
++     for(let i=1;i<3;i++)assert.ok(layout.steps[i].y>=layout.steps[i-1].y+layout.steps[i-1].height);
++     for(const step of layout.steps){assert.ok(step.x>=0);assert.ok(step.x+step.width<=width);}
++     assert.equal(count(await events(p),'compare_view'),0);
++    }
++    await p.locator('.hero .btn').click();
++    if(version==='after'){
++     await p.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
++     assert.equal(await p.locator('[data-card]:visible').count(),1);
++     assert.equal(await p.locator('.choice').isVisible(),false);
++     assert.equal(await p.locator('#more-providers').isVisible(),false);
++     await p.locator('[data-card="ququmo"]').screenshot({path:path.join(out,'after-provider-'+width+'.png')});
++     const oldUrl=p.url(),button=p.locator('[data-preview-cta]');
++     assert.equal(await button.getAttribute('aria-disabled'),'true');await button.click({force:true});assert.equal(p.url(),oldUrl);
++     let box=await button.boundingBox(),sticky=await p.locator('.sticky').boundingBox();
++     assert.ok(box.y>=0&&box.y+box.height<=sticky.y,'CTA covered by sticky footer');
++     await button.focus();await p.keyboard.press('Enter');assert.equal(p.url(),oldUrl);
++     const faq=p.locator('.faq details').first();await faq.locator('summary').click();assert.notEqual(await faq.getAttribute('open'),null);
++     await faq.locator('summary').click();assert.equal(await faq.getAttribute('open'),null);
++     await p.evaluate(()=>scrollTo(0,0));await p.waitForTimeout(100);await p.locator('.sticky a').click();await p.waitForTimeout(100);
++     const got=await events(p);
++     for(const [name,n] of [['page_view',1],['compare_view',1],['compare_click',2],['cta_click',2],['provider_outbound',0],['business_type_select',0]])assert.equal(count(got,name),n,name);
++     for(const e of got){assert.equal(e.fields.page_location,'http://127.0.0.1:'+port+'/');assert.equal(e.fields.business_type,'unspecified');assert.ok(!JSON.stringify(e).includes('do-not-send'));assert.ok(!JSON.stringify(e).includes('info@'));}
++     const privacy=p.locator('.policy').last();await privacy.locator('summary').click();assert.ok((await privacy.innerText()).includes('Google Analytics'));await privacy.locator('summary').click();
++     await p.setViewportSize({width,height:640});await button.click({force:true});box=await button.boundingBox();sticky=await p.locator('.sticky').boundingBox();assert.ok(box.y+box.height<=sticky.y);
++     result.previewEvents=got.map(e=>e.name);
++    }
++    assert.equal(errors.length,0);result[version]={layout,pageErrors:errors};await c.close();
++   }
++   const direct=await context(width),p=await direct.newPage();await p.goto('http://127.0.0.1:8011/#compare');
++   await p.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
++   assert.equal(count(await events(p),'compare_view'),1);assert.equal(count(await events(p),'compare_click'),0);await direct.close();
++   const scrolling=await context(width),scrolled=await scrolling.newPage();await scrolled.goto('http://127.0.0.1:8011/');
++   await scrolled.locator('#compare h2').scrollIntoViewIfNeeded();
++   await scrolled.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
++   assert.equal(count(await events(scrolled),'compare_view'),1);assert.equal(count(await events(scrolled),'compare_click'),0);await scrolling.close();
++   const nojs=await context(width,{javaScriptEnabled:false}),f=await nojs.newPage();await f.goto('http://127.0.0.1:8011/');
++   assert.equal(await f.locator('[data-card]:visible').count(),1);assert.equal(await f.locator('[data-provider]:visible').count(),1);
++   assert.equal(await f.locator('[data-provider]:visible').evaluate(e=>e.tagName),'BUTTON');assert.equal(await f.locator('[data-provider]:visible').getAttribute('href'),null);
++   await nojs.close();result.directAnchorView=true;result.scrollView=true;result.noJsFallback=true;results.push(result);
++  }
++  // Current analytics with original multi-provider HTML/config verifies retained behavior.
++  const legacy=await context(375);await legacy.route('**/assets/analytics.js',r=>r.fulfill({contentType:'text/javascript',body:fs.readFileSync('assets/analytics.js','utf8')}));
++  const p=await legacy.newPage();await p.goto('http://127.0.0.1:8012/');assert.equal(await p.locator('[data-card]:visible').count(),3);
++  await p.locator('[data-type="corporate"]').click();assert.equal(await p.locator('[data-card]:visible').count(),3);
++  await p.locator('#more-providers').click();assert.equal(await p.locator('[data-card]:visible').count(),5);
++  await p.locator('[data-type="individual"]').click();assert.equal(await p.locator('[data-card]:visible').count(),3);
++  const link=p.locator('[data-provider="ququmo"]');await link.evaluate(e=>e.addEventListener('click',x=>x.preventDefault(),{once:true}));
++  await link.click();assert.equal(count(await events(p),'provider_outbound'),1);await legacy.close();
++  // Failed config download must not accidentally reveal unreleased records.
++  const missing=await context(375);await missing.route('**/assets/config.js',r=>r.abort());
++  const failed=await missing.newPage(),failureErrors=[];failed.on('pageerror',e=>failureErrors.push(e.message));await failed.goto('http://127.0.0.1:8011/');
++  assert.equal(await failed.locator('[data-card]:visible').count(),1);
++  assert.equal(await failed.locator('.choice').isVisible(),false);
++  const url=failed.url();await failed.locator('[data-preview-cta]').click({force:true});assert.equal(failed.url(),url);
++  assert.equal(await failed.evaluate(()=>window.dataLayer.filter(e=>e.event==='provider_outbound').length),0);
++  assert.equal(await failed.evaluate(()=>window.dataLayer.filter(e=>e.event==='cta_click').length),1);
++  assert.equal(failureErrors.length,0);await missing.close();
++  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({widths:results,legacyCompatibility:true,configFailureSafe:true},null,2));
++  console.log('PASS 320/375/390px: layout/sticky CTA, single/no-JS, FAQ, disabled outbound, keyboard, compare_view once/direct anchor, GA4 queues; legacy 3→3→5→3 and outbound');
++ }finally{await browser.close();}
++})().catch(e=>{console.error(e);process.exitCode=1});

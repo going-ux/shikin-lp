@@ -1,49 +1,89 @@
+// Run current prototype on 8011 and main 829231f snapshot on 8012.
+// Chromium and Playwright are required; third-party traffic is blocked.
 const {chromium}=require('playwright');
-const assert=require('node:assert/strict'),fs=require('node:fs');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const out=path.join(process.cwd(),'docs/evidence/implementation-20261016');
+const events=p=>p.evaluate(()=>window.dataLayer.filter(e=>e[0]==='event').map(e=>({name:e[1],fields:e[2]})));
+const count=(entries,name)=>entries.filter(e=>e.name===name).length;
 (async()=>{
-const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
-const dir=require('node:path').join(process.cwd(),'docs/evidence/payment-cycle');fs.mkdirSync(dir,{recursive:true});const results=[];
-for(const width of [320,375,390]){
- const result={width};
- for(const [version,port] of [['before',8002],['after',8001]]){
-  const context=await browser.newContext({viewport:{width,height:780},deviceScaleFactor:1,isMobile:true,hasTouch:true});
-  await context.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());
-  const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:'+port+'/?private=do-not-send#top');await page.evaluate(()=>document.fonts.ready);
-  const section=page.locator('section').filter({has:page.locator('.timeline')});
-  await section.scrollIntoViewIfNeeded();
-  await section.screenshot({path:dir+'/'+version+'-'+width+'.png'});
-  const layout=await page.evaluate(()=>{
-   const timeline=document.querySelector('.timeline'),section=timeline.closest('section'),sticky=document.querySelector('.sticky');
-   return {scrollWidth:document.documentElement.scrollWidth,viewport:innerWidth,sectionHeight:section.getBoundingClientRect().height,stickyHeight:sticky.getBoundingClientRect().height,steps:[...timeline.children].map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})};
-  });
-  assert.equal(layout.scrollWidth,width);assert.equal(errors.length,0);
-  if(version==='after'){
-   assert.equal(await page.locator('ol.payment-cycle>li').count(),3);
-   for(let i=1;i<3;i++)assert.ok(layout.steps[i].y>=layout.steps[i-1].y+layout.steps[i-1].height);
-   for(const s of layout.steps){assert.ok(s.x>=0);assert.ok(s.x+s.width<=width);}
-   // Viewport screenshot records the whole diagram and fixed CTA together.
-   await page.screenshot({path:dir+'/after-viewport-'+width+'.png'});
-  }
-  await page.locator('.hero .btn').click();
-  assert.equal(await page.locator('[data-card]:visible').count(),3);
-  await page.locator('[data-type="corporate"]').click();
-  assert.equal(await page.locator('[data-card]:visible').count(),3);
-  await page.locator('#more-providers').click();assert.equal(await page.locator('[data-card]:visible').count(),5);
-  await page.locator('[data-type="individual"]').click();assert.equal(await page.locator('[data-card]:visible').count(),3);
-  const outbound=page.locator('[data-provider="ququmo"]');
-  await outbound.evaluate(el=>el.addEventListener('click',e=>e.preventDefault(),{once:true}));
-  await outbound.click();
-  const events=await page.evaluate(()=>window.dataLayer.filter(e=>e[0]==='event').map(e=>({name:e[1],location:e[2].page_location})));
-  assert.equal(events.filter(e=>e.name==='page_view').length,1);
-  assert.equal(events.filter(e=>e.name==='business_type_select').length,2);
-  for(const name of ['compare_click','comparison_expand','provider_outbound'])assert.equal(events.filter(e=>e.name===name).length,1);
-  for(const e of events)assert.equal(e.location,'http://127.0.0.1:'+port+'/');
-  const sticky=page.locator('.sticky a');await sticky.click();
-  assert.ok(await sticky.isVisible());
-  result[version]={...layout,events:events.map(e=>e.name),pageErrors:errors};await context.close();
+ fs.mkdirSync(out,{recursive:true});
+ const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+ const results=[];
+ async function context(width,extras={}){
+  const c=await browser.newContext({viewport:{width,height:780},deviceScaleFactor:1,isMobile:true,hasTouch:true,...extras});
+  await c.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());return c;
  }
- results.push(result);
-}
-fs.writeFileSync(dir+'/results.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));await browser.close();
+ try{
+  for(const width of [320,375,390]){
+   const result={width};
+   for(const [version,port] of [['before',8012],['after',8011]]){
+    const c=await context(width),p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+    await p.goto('http://127.0.0.1:'+port+'/?private=do-not-send#top');await p.evaluate(()=>document.fonts.ready);
+    await p.screenshot({path:path.join(out,version+'-full-'+width+'.png'),fullPage:true});
+    const cycle=p.locator('section').filter({has:p.locator('.timeline')});
+    await cycle.screenshot({path:path.join(out,version+'-cycle-'+width+'.png')});
+    const layout=await p.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
+     steps:[...document.querySelector('.timeline').children].map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})}));
+    assert.equal(layout.width,layout.scrollWidth);
+    if(version==='after'){
+     for(let i=1;i<3;i++)assert.ok(layout.steps[i].y>=layout.steps[i-1].y+layout.steps[i-1].height);
+     for(const step of layout.steps){assert.ok(step.x>=0);assert.ok(step.x+step.width<=width);}
+     assert.equal(count(await events(p),'compare_view'),0);
+    }
+    await p.locator('.hero .btn').click();
+    if(version==='after'){
+     await p.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
+     assert.equal(await p.locator('[data-card]:visible').count(),1);
+     assert.equal(await p.locator('.choice').isVisible(),false);
+     assert.equal(await p.locator('#more-providers').isVisible(),false);
+     await p.locator('[data-card="ququmo"]').screenshot({path:path.join(out,'after-provider-'+width+'.png')});
+     const oldUrl=p.url(),button=p.locator('[data-preview-cta]');
+     assert.equal(await button.getAttribute('aria-disabled'),'true');await button.click({force:true});assert.equal(p.url(),oldUrl);
+     let box=await button.boundingBox(),sticky=await p.locator('.sticky').boundingBox();
+     assert.ok(box.y>=0&&box.y+box.height<=sticky.y,'CTA covered by sticky footer');
+     await button.focus();await p.keyboard.press('Enter');assert.equal(p.url(),oldUrl);
+     const faq=p.locator('.faq details').first();await faq.locator('summary').click();assert.notEqual(await faq.getAttribute('open'),null);
+     await faq.locator('summary').click();assert.equal(await faq.getAttribute('open'),null);
+     await p.evaluate(()=>scrollTo(0,0));await p.waitForTimeout(100);await p.locator('.sticky a').click();await p.waitForTimeout(100);
+     const got=await events(p);
+     for(const [name,n] of [['page_view',1],['compare_view',1],['compare_click',2],['cta_click',2],['provider_outbound',0],['business_type_select',0]])assert.equal(count(got,name),n,name);
+     for(const e of got){assert.equal(e.fields.page_location,'http://127.0.0.1:'+port+'/');assert.equal(e.fields.business_type,'unspecified');assert.ok(!JSON.stringify(e).includes('do-not-send'));assert.ok(!JSON.stringify(e).includes('info@'));}
+     const privacy=p.locator('.policy').last();await privacy.locator('summary').click();assert.ok((await privacy.innerText()).includes('Google Analytics'));await privacy.locator('summary').click();
+     await p.setViewportSize({width,height:640});await button.click({force:true});box=await button.boundingBox();sticky=await p.locator('.sticky').boundingBox();assert.ok(box.y+box.height<=sticky.y);
+     result.previewEvents=got.map(e=>e.name);
+    }
+    assert.equal(errors.length,0);result[version]={layout,pageErrors:errors};await c.close();
+   }
+   const direct=await context(width),p=await direct.newPage();await p.goto('http://127.0.0.1:8011/#compare');
+   await p.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
+   assert.equal(count(await events(p),'compare_view'),1);assert.equal(count(await events(p),'compare_click'),0);await direct.close();
+   const scrolling=await context(width),scrolled=await scrolling.newPage();await scrolled.goto('http://127.0.0.1:8011/');
+   await scrolled.locator('#compare h2').scrollIntoViewIfNeeded();
+   await scrolled.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
+   assert.equal(count(await events(scrolled),'compare_view'),1);assert.equal(count(await events(scrolled),'compare_click'),0);await scrolling.close();
+   const nojs=await context(width,{javaScriptEnabled:false}),f=await nojs.newPage();await f.goto('http://127.0.0.1:8011/');
+   assert.equal(await f.locator('[data-card]:visible').count(),1);assert.equal(await f.locator('[data-provider]:visible').count(),1);
+   assert.equal(await f.locator('[data-provider]:visible').evaluate(e=>e.tagName),'BUTTON');assert.equal(await f.locator('[data-provider]:visible').getAttribute('href'),null);
+   await nojs.close();result.directAnchorView=true;result.scrollView=true;result.noJsFallback=true;results.push(result);
+  }
+  // Current analytics with original multi-provider HTML/config verifies retained behavior.
+  const legacy=await context(375);await legacy.route('**/assets/analytics.js',r=>r.fulfill({contentType:'text/javascript',body:fs.readFileSync('assets/analytics.js','utf8')}));
+  const p=await legacy.newPage();await p.goto('http://127.0.0.1:8012/');assert.equal(await p.locator('[data-card]:visible').count(),3);
+  await p.locator('[data-type="corporate"]').click();assert.equal(await p.locator('[data-card]:visible').count(),3);
+  await p.locator('#more-providers').click();assert.equal(await p.locator('[data-card]:visible').count(),5);
+  await p.locator('[data-type="individual"]').click();assert.equal(await p.locator('[data-card]:visible').count(),3);
+  const link=p.locator('[data-provider="ququmo"]');await link.evaluate(e=>e.addEventListener('click',x=>x.preventDefault(),{once:true}));
+  await link.click();assert.equal(count(await events(p),'provider_outbound'),1);await legacy.close();
+  // Failed config download must not accidentally reveal unreleased records.
+  const missing=await context(375);await missing.route('**/assets/config.js',r=>r.abort());
+  const failed=await missing.newPage(),failureErrors=[];failed.on('pageerror',e=>failureErrors.push(e.message));await failed.goto('http://127.0.0.1:8011/');
+  assert.equal(await failed.locator('[data-card]:visible').count(),1);
+  assert.equal(await failed.locator('.choice').isVisible(),false);
+  const url=failed.url();await failed.locator('[data-preview-cta]').click({force:true});assert.equal(failed.url(),url);
+  assert.equal(await failed.evaluate(()=>window.dataLayer.filter(e=>e.event==='provider_outbound').length),0);
+  assert.equal(await failed.evaluate(()=>window.dataLayer.filter(e=>e.event==='cta_click').length),1);
+  assert.equal(failureErrors.length,0);await missing.close();
+  fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({widths:results,legacyCompatibility:true,configFailureSafe:true},null,2));
+  console.log('PASS 320/375/390px: layout/sticky CTA, single/no-JS, FAQ, disabled outbound, keyboard, compare_view once/direct anchor, GA4 queues; legacy 3→3→5→3 and outbound');
+ }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});
