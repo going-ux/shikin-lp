@@ -63,15 +63,14 @@ PRにはmainとの差分として、先行作業の縦3段図解・単社紹介�
 
 [ブラウザ結果JSON](evidence/release-prep-20261017/results.json)。A8管理画面や内部資料の画像・数値は含まない。
 
-## PR作成・公開状態
+## PR作成・公開状態（更新）
 
-GitHub APIの通常呼出し・エスカレーション付き呼出しはいずれもForbiddenでPR作成に失敗。Webページの検索でも対象ブランチの既存PRは見つからなかった。PR作成の成功/番号/URLは確認できていない。コード・本文は作業ブランチに保存し、手動作成可能な画面を用意する。mainは変更しない。
+初回のAPI作成は403で失敗したが、その後利用者により [PR #8](https://github.com/going-ux/shikin-lp/pull/8) がDraftで作成されたことを確認。現在の最終レビューと公開までの残課題は [PR #8最終レビュー](pr8-final-review-20261017.md) を参照。履歴上の競合なし、Checksなし、Draftを維持。main未変更。
 
 ### 次の確認順序
 
-1. レビュー用PRを作成する（下の画面では本文が入力済み。可能ならDraftで作成）。マージ/公開はしない。
+1. 作成済みPR #8をレビューし、残課題を解消する。Draft解除・マージ/公開は別承認。
 2. A8の最新公式案内で改変・計測画像・素材の扱い、掲載条件と指定経路、必要なURL提出等を確認。
 3. 発行コードを対象サイト・掲載面と照合し、公開用のサービス条件・必要な開示・運営連絡先を確認。
 4. 稼働化の別承認後に実コードを設置し、実ブラウザのGA4受信とASPの許される検証を行う。広告出稿の承認はさらに別。
 
-[本文入力済みのPR作成画面](https://github.com/going-ux/shikin-lp/compare/main...feat/lp-brief-20261016?expand=1&title=%E5%85%AC%E9%96%8B%E6%BA%96%E5%82%99%EF%BC%9AQuQuMo%E5%8D%98%E7%A4%BE%E7%B4%B9%E4%BB%8B%E3%83%BBA8%E8%A8%AD%E7%BD%AE%E6%9E%A0%EF%BC%88%E9%80%81%E5%AE%A2%E5%81%9C%E6%AD%A2%EF%BC%89&body=%23%23+%E5%A4%89%E6%9B%B4%0AQuQuMo%E5%8D%98%E7%A4%BE%E7%B4%B9%E4%BB%8B%E3%80%81%E7%B8%A63%E6%AE%B5%E5%9B%B3%E3%80%81%E5%9B%BA%E5%AE%9A%E3%82%B3%E3%83%94%E3%83%BC%E3%83%BB%E9%85%8D%E8%89%B2%E3%83%BB%E9%BB%84%E8%89%B2CTA%E3%82%92%E7%B6%AD%E6%8C%81%E3%80%82%E7%A9%BA%E3%81%AEA8%E8%A8%AD%E7%BD%AE%E6%9E%A0%E3%81%A8%E5%85%AC%E9%96%8B%E5%90%91%E3%81%91PR%2F%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E8%A1%A8%E8%A8%98%E3%82%92%E6%BA%96%E5%82%99%E3%80%82%E5%AE%9F%E5%BA%83%E5%91%8A%E3%82%B3%E3%83%BC%E3%83%89%E3%83%BB%E8%A8%88%E6%B8%AC%E7%94%BB%E5%83%8F%E3%81%AF%E5%85%A5%E3%82%8C%E3%81%9A%E3%80%81%E5%A4%96%E9%83%A8%E9%80%81%E5%AE%A2%E5%81%9C%E6%AD%A2%E3%82%92%E7%B6%AD%E6%8C%81%E3%80%82%0A%0A%23%23+%E3%83%86%E3%82%B9%E3%83%88%0A320%2F375%2F390px%E3%80%81FAQ%E3%80%81%E5%86%85%E9%83%A8%E3%83%BB%E5%9B%BA%E5%AE%9ACTA%E3%80%81GA4%E5%8D%98%E4%BD%93%2F%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E3%82%AD%E3%83%A5%E3%83%BC%E3%80%81%E8%A8%AD%E7%BD%AE%E6%9E%A0%E3%81%AE%E9%9D%9E%E8%AA%AD%E8%BE%BC%E3%82%92%E7%A2%BA%E8%AA%8D%E3%80%82%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E3%83%86%E3%82%B9%E3%83%88PASS%E3%80%82%0A%0A%23%23+%E6%9C%AA%E7%A2%BA%E8%AA%8D%0AA8%E6%94%B9%E5%A4%89%2F%E7%94%BB%E5%83%8F%E8%A6%8F%E5%AE%9A%E3%81%AF%E5%85%AC%E5%BC%8F%E6%8E%A5%E7%B6%9A403%E3%81%A7%E6%9C%AA%E7%A2%BA%E8%AA%8D%E3%80%82%E5%AE%9F%E3%82%B3%E3%83%BC%E3%83%89%E3%83%BB%E6%8E%B2%E8%BC%89%2F%E5%BA%83%E5%91%8A%E8%A8%B1%E5%8F%AF%E3%80%81GA4%E6%9C%AC%E7%95%AA%E5%8F%97%E4%BF%A1%E3%80%81A8%E5%B8%B0%E5%B1%9E%E3%82%82%E6%9C%AA%E7%A2%BA%E8%AA%8D%E3%80%82%0A%0A%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E7%94%A8%E3%81%A7%E3%81%99%E3%80%82main%E3%83%9E%E3%83%BC%E3%82%B8%E3%83%BB%E6%9C%AC%E7%95%AA%E5%85%AC%E9%96%8B%E3%83%BB%E5%BA%83%E5%91%8A%E5%87%BA%E7%A8%BF%E3%81%AF%E8%A1%8C%E3%82%8F%E3%81%AA%E3%81%84%E3%81%A7%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%0A%0A%E8%A9%B3%E7%B4%B0%E3%83%BB%E7%94%BB%E5%83%8F%3A+https%3A%2F%2Fgithub.com%2Fgoing-ux%2Fshikin-lp%2Fblob%2Ffeat%2Flp-brief-20261016%2Fdocs%2Frelease-review-20261017.md)
