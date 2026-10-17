@@ -1,0 +1,216 @@
+{
+  "widths": [
+    {
+      "width": 320,
+      "before": {
+        "layout": {
+          "width": 320,
+          "scrollWidth": 320,
+          "steps": [
+            {
+              "x": 20,
+              "y": 319.875,
+              "width": 88.65625,
+              "height": 66
+            },
+            {
+              "x": 115.65625,
+              "y": 319.875,
+              "width": 88.671875,
+              "height": 66
+            },
+            {
+              "x": 211.328125,
+              "y": 319.875,
+              "width": 88.671875,
+              "height": 66
+            }
+          ]
+        },
+        "pageErrors": [],
+        "adRequests": []
+      },
+      "previewEvents": [
+        "page_view",
+        "compare_click",
+        "compare_view",
+        "cta_click",
+        "cta_click",
+        "compare_click"
+      ],
+      "after": {
+        "layout": {
+          "width": 320,
+          "scrollWidth": 320,
+          "steps": [
+            {
+              "x": 20,
+              "y": 313.359375,
+              "width": 280,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 419.15625,
+              "width": 280,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 524.953125,
+              "width": 280,
+              "height": 83.796875
+            }
+          ]
+        },
+        "pageErrors": [],
+        "adRequests": []
+      },
+      "directAnchorView": true,
+      "scrollView": true,
+      "noJsFallback": true
+    },
+    {
+      "width": 375,
+      "before": {
+        "layout": {
+          "width": 375,
+          "scrollWidth": 375,
+          "steps": [
+            {
+              "x": 20,
+              "y": 319.5625,
+              "width": 107,
+              "height": 66
+            },
+            {
+              "x": 134,
+              "y": 319.5625,
+              "width": 107,
+              "height": 66
+            },
+            {
+              "x": 248,
+              "y": 319.5625,
+              "width": 107,
+              "height": 66
+            }
+          ]
+        },
+        "pageErrors": [],
+        "adRequests": []
+      },
+      "previewEvents": [
+        "page_view",
+        "compare_click",
+        "compare_view",
+        "cta_click",
+        "cta_click",
+        "compare_click"
+      ],
+      "after": {
+        "layout": {
+          "width": 375,
+          "scrollWidth": 375,
+          "steps": [
+            {
+              "x": 20,
+              "y": 309.25,
+              "width": 335,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 415.046875,
+              "width": 335,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 520.84375,
+              "width": 335,
+              "height": 83.796875
+            }
+          ]
+        },
+        "pageErrors": [],
+        "adRequests": []
+      },
+      "directAnchorView": true,
+      "scrollView": true,
+      "noJsFallback": true
+    },
+    {
+      "width": 390,
+      "before": {
+        "layout": {
+          "width": 390,
+          "scrollWidth": 390,
+          "steps": [
+            {
+              "x": 20,
+              "y": 319.5,
+              "width": 112,
+              "height": 66
+            },
+            {
+              "x": 139,
+              "y": 319.5,
+              "width": 112,
+              "height": 66
+            },
+            {
+              "x": 258,
+              "y": 319.5,
+              "width": 112,
+              "height": 66
+            }
+          ]
+        },
+        "pageErrors": [],
+        "adRequests": []
+      },
+      "previewEvents": [
+        "page_view",
+        "compare_click",
+        "compare_view",
+        "cta_click",
+        "cta_click",
+        "compare_click"
+      ],
+      "after": {
+        "layout": {
+          "width": 390,
+          "scrollWidth": 390,
+          "steps": [
+            {
+              "x": 20,
+              "y": 309.1875,
+              "width": 350,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 414.984375,
+              "width": 350,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 520.78125,
+              "width": 350,
+              "height": 83.796875
+            }
+          ]
+        },
+        "pageErrors": [],
+        "adRequests": []
+      },
+      "directAnchorView": true,
+      "scrollView": true,
+      "noJsFallback": true
+    }
+  ],
+  "legacyCompatibility": true,
+  "configFailureSafe": true
+}

@@ -1,0 +1,210 @@
+{
+  "widths": [
+    {
+      "width": 320,
+      "before": {
+        "layout": {
+          "width": 320,
+          "scrollWidth": 320,
+          "steps": [
+            {
+              "x": 20,
+              "y": 319.875,
+              "width": 88.65625,
+              "height": 66
+            },
+            {
+              "x": 115.65625,
+              "y": 319.875,
+              "width": 88.671875,
+              "height": 66
+            },
+            {
+              "x": 211.328125,
+              "y": 319.875,
+              "width": 88.671875,
+              "height": 66
+            }
+          ]
+        },
+        "pageErrors": []
+      },
+      "previewEvents": [
+        "page_view",
+        "compare_click",
+        "compare_view",
+        "cta_click",
+        "cta_click",
+        "compare_click"
+      ],
+      "after": {
+        "layout": {
+          "width": 320,
+          "scrollWidth": 320,
+          "steps": [
+            {
+              "x": 20,
+              "y": 196.265625,
+              "width": 280,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 302.0625,
+              "width": 280,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 407.859375,
+              "width": 280,
+              "height": 83.796875
+            }
+          ]
+        },
+        "pageErrors": []
+      },
+      "directAnchorView": true,
+      "scrollView": true,
+      "noJsFallback": true
+    },
+    {
+      "width": 375,
+      "before": {
+        "layout": {
+          "width": 375,
+          "scrollWidth": 375,
+          "steps": [
+            {
+              "x": 20,
+              "y": 319.5625,
+              "width": 107,
+              "height": 66
+            },
+            {
+              "x": 134,
+              "y": 319.5625,
+              "width": 107,
+              "height": 66
+            },
+            {
+              "x": 248,
+              "y": 319.5625,
+              "width": 107,
+              "height": 66
+            }
+          ]
+        },
+        "pageErrors": []
+      },
+      "previewEvents": [
+        "page_view",
+        "compare_click",
+        "compare_view",
+        "cta_click",
+        "cta_click",
+        "compare_click"
+      ],
+      "after": {
+        "layout": {
+          "width": 375,
+          "scrollWidth": 375,
+          "steps": [
+            {
+              "x": 20,
+              "y": 205.953125,
+              "width": 335,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 311.75,
+              "width": 335,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 417.546875,
+              "width": 335,
+              "height": 83.796875
+            }
+          ]
+        },
+        "pageErrors": []
+      },
+      "directAnchorView": true,
+      "scrollView": true,
+      "noJsFallback": true
+    },
+    {
+      "width": 390,
+      "before": {
+        "layout": {
+          "width": 390,
+          "scrollWidth": 390,
+          "steps": [
+            {
+              "x": 20,
+              "y": 319.5,
+              "width": 112,
+              "height": 66
+            },
+            {
+              "x": 139,
+              "y": 319.5,
+              "width": 112,
+              "height": 66
+            },
+            {
+              "x": 258,
+              "y": 319.5,
+              "width": 112,
+              "height": 66
+            }
+          ]
+        },
+        "pageErrors": []
+      },
+      "previewEvents": [
+        "page_view",
+        "compare_click",
+        "compare_view",
+        "cta_click",
+        "cta_click",
+        "compare_click"
+      ],
+      "after": {
+        "layout": {
+          "width": 390,
+          "scrollWidth": 390,
+          "steps": [
+            {
+              "x": 20,
+              "y": 205.890625,
+              "width": 350,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 311.6875,
+              "width": 350,
+              "height": 83.796875
+            },
+            {
+              "x": 20,
+              "y": 417.484375,
+              "width": 350,
+              "height": 83.796875
+            }
+          ]
+        },
+        "pageErrors": []
+      },
+      "directAnchorView": true,
+      "scrollView": true,
+      "noJsFallback": true
+    }
+  ],
+  "legacyCompatibility": true,
+  "configFailureSafe": true
+}
