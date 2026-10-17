@@ -2,7 +2,7 @@
 // Chromium and Playwright are required; third-party traffic is blocked.
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const out=path.join(process.cwd(),'docs/evidence/implementation-20261016');
+const out=path.resolve(process.cwd(),process.env.LP_EVIDENCE_DIR||'docs/evidence/implementation-20261016');
 const events=p=>p.evaluate(()=>window.dataLayer.filter(e=>e[0]==='event').map(e=>({name:e[1],fields:e[2]})));
 const count=(entries,name)=>entries.filter(e=>e.name===name).length;
 (async()=>{
@@ -17,7 +17,8 @@ const count=(entries,name)=>entries.filter(e=>e.name===name).length;
   for(const width of [320,375,390]){
    const result={width};
    for(const [version,port] of [['before',8012],['after',8011]]){
-    const c=await context(width),p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+    const c=await context(width),p=await c.newPage(),errors=[],adRequests=[];p.on('pageerror',e=>errors.push(e.message));
+    p.on('request',request=>{const host=new URL(request.url()).hostname;if(host.endsWith('a8.net')||host.endsWith('example.invalid'))adRequests.push(request.url());});
     await p.goto('http://127.0.0.1:'+port+'/?private=do-not-send#top');await p.evaluate(()=>document.fonts.ready);
     await p.screenshot({path:path.join(out,version+'-full-'+width+'.png'),fullPage:true});
     const cycle=p.locator('section').filter({has:p.locator('.timeline')});
@@ -36,6 +37,12 @@ const count=(entries,name)=>entries.filter(e=>e.name===name).length;
      assert.equal(await p.locator('[data-card]:visible').count(),1);
      assert.equal(await p.locator('.choice').isVisible(),false);
      assert.equal(await p.locator('#more-providers').isVisible(),false);
+     assert.equal(await p.locator('#ququmo-affiliate-slot').getAttribute('data-status'),'pending');
+     assert.equal(await p.locator('#ququmo-a8-code').evaluate(t=>t.content.querySelectorAll('*').length),0);
+     // Synthetic non-A8 fixture verifies inert template content cannot load a pixel.
+     await p.locator('#ququmo-a8-code').evaluate(t=>{t.innerHTML='<a href="https://example.invalid/link">fixture</a><img src="https://example.invalid/pixel.gif" width="1" height="1" alt="">';});
+     await p.waitForTimeout(100);assert.equal(adRequests.length,0);
+     assert.equal(await p.locator('#ququmo-affiliate-slot a').count(),0);
      await p.locator('[data-card="ququmo"]').screenshot({path:path.join(out,'after-provider-'+width+'.png')});
      const oldUrl=p.url(),button=p.locator('[data-preview-cta]');
      assert.equal(await button.getAttribute('aria-disabled'),'true');await button.click({force:true});assert.equal(p.url(),oldUrl);
@@ -49,10 +56,13 @@ const count=(entries,name)=>entries.filter(e=>e.name===name).length;
      for(const [name,n] of [['page_view',1],['compare_view',1],['compare_click',2],['cta_click',2],['provider_outbound',0],['business_type_select',0]])assert.equal(count(got,name),n,name);
      for(const e of got){assert.equal(e.fields.page_location,'http://127.0.0.1:'+port+'/');assert.equal(e.fields.business_type,'unspecified');assert.ok(!JSON.stringify(e).includes('do-not-send'));assert.ok(!JSON.stringify(e).includes('info@'));}
      const privacy=p.locator('.policy').last();await privacy.locator('summary').click();assert.ok((await privacy.innerText()).includes('Google Analytics'));await privacy.locator('summary').click();
+     assert.equal(await p.locator('.policy a[href^="https://policies.google.com/"]').count(),2);
+     assert.ok(!(await p.locator('body').innerText()).includes('開発試作'));
+     assert.ok(!(await p.locator('body').innerText()).includes('（試作）'));
      await p.setViewportSize({width,height:640});await button.click({force:true});box=await button.boundingBox();sticky=await p.locator('.sticky').boundingBox();assert.ok(box.y+box.height<=sticky.y);
      result.previewEvents=got.map(e=>e.name);
     }
-    assert.equal(errors.length,0);result[version]={layout,pageErrors:errors};await c.close();
+    assert.equal(errors.length,0);assert.equal(adRequests.length,0);result[version]={layout,pageErrors:errors,adRequests};await c.close();
    }
    const direct=await context(width),p=await direct.newPage();await p.goto('http://127.0.0.1:8011/#compare');
    await p.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));

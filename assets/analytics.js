@@ -10,9 +10,7 @@
     const script = document.createElement('script');
     script.async = true; script.src = 'https://www.googletagmanager.com/gtag/js?id=' + config.measurementId;
     document.head.appendChild(script);
-    // Do not transmit URL query strings, gclid, user financial/contact information.
-    const privacy = document.querySelector('.policy:last-of-type p');
-    if (privacy) privacy.textContent = 'アクセス解析にGoogle Analyticsを使用します。操作イベントとクエリを除いたページURLを送信します。Cookie等が使用される場合があります。Googleのプライバシーポリシーもご確認ください。';
+    // Privacy information is in static HTML; preserve its policy links.
   }
   function track(event, fields = {}) {
     const payload = {...fields, business_type:sameAudience?'unspecified':businessType, experiment_id:'baseline', variant:'A', page_version:config.pageVersion || 'v2', page_location:location.origin + location.pathname};

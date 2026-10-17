@@ -2,7 +2,11 @@
 
 2026-10-16。ブランチ feat/lp-brief-20261016。本番サイトとは別の試作です。利用者承認によりコード・画像を共有します。mainマージ・本番公開・広告出稿は行いません。
 
-## 最初に見る画像
+## 最新の公開準備
+
+[公開準備の変更・テスト・A8確認事項・PR作成状況](release-review-20261017.md) ／ [最新375pxの全体](evidence/release-prep-20261017/after-full-375.png)。送客停止中、main未反映です。
+
+## これまでの試作画像
 
 [最新の変更後ページ全体（375px）](evidence/cycle-copy-20261017/after-full-375.png) ／ [今回の変更前（375px）](evidence/cycle-copy-20261017/before-full-375.png) ／ [見出し・説明の変更と検証](cycle-copy-review-20261017.md)
 

@@ -43,3 +43,8 @@ User-provided G-JGJTNJHVZ5 is configured. Initial page_view is sent manually onc
 ## 2026-10-16 local development prototype (not deployed)
 
 feat/lp-brief-20261016 is a local single-provider prototype, not the production state described above. It adds compare_view once when at least half the service heading is visible (bottom 90px excluded); compare_click remains the internal CTA operation. A disabled preview CTA generates cta_click with link_kind=disabled and disabled=true, never provider_outbound. Single-provider visitors have business_type=unspecified and no business-type selection is required. Existing selection/expansion/outbound event names remain compatible for the retained multi-provider mode. See [implementation review](implementation-review-20261016.md) for the event table and browser evidence. Network delivery, full GA4 receipt and A8 attribution remain unverified.
+
+
+## 2026-10-17 release preparation (not deployed)
+
+GA4 ID and event semantics are unchanged; page_version is 20261017-release-prep. Privacy information and Google references now live in static HTML and are not overwritten by analytics.js. A8's empty template is inert and not automatically activated. The pending CTA still sends cta_click with disabled=true, never an outbound/lead/approved conversion. The synthetic template fixture verifies non-loading only, not real A8 pixel behavior. See [release review](release-review-20261017.md) for current checks and blockers.
