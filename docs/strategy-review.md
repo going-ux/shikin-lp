@@ -4,11 +4,11 @@
 
 ## 最初に見る画像
 
-[変更後のページ全体（375px）](evidence/implementation-20261016/after-full-375.png) ／ [変更前（375px）](evidence/implementation-20261016/before-full-375.png)
+[最新の変更後ページ全体（375px）](evidence/cycle-copy-20261017/after-full-375.png) ／ [今回の変更前（375px）](evidence/cycle-copy-20261017/before-full-375.png) ／ [見出し・説明の変更と検証](cycle-copy-review-20261017.md)
 
 ### 入金サイクル図
 
-![縦3段の入金サイクル図](evidence/implementation-20261016/after-cycle-320.png)
+![見出し・説明を改善した縦3段図解（375px）](evidence/cycle-copy-20261017/after-375.png)
 
 ### QuQuMo紹介
 
