@@ -2,7 +2,11 @@
 
 2026-10-16。ブランチ feat/lp-brief-20261016。本番サイトとは別の試作です。利用者承認によりコード・画像を共有します。mainマージ・本番公開・広告出稿は行いません。
 
-## 最新の最終レビュー
+## 最新：SEO検証用・送客停止版
+
+[2026-10-18のSEO基本設定・再テスト・レビュー判定](seo-release-review-20261018.md) ／ [最新375px](evidence/seo-release-20261018/after-full-375.png)。A8送客やGoogle広告は開始せず、mainマージ・公開は最終承認後です。
+
+## 前回の最終レビュー
 
 [PR #8](https://github.com/going-ux/shikin-lp/pull/8) はDraftです。[マージ状態・再テスト・A8送客版公開までの残課題](pr8-final-review-20261017.md)を確認してください。
 

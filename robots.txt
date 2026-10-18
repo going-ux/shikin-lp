@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /docs/
+Disallow: /tests/
+Disallow: /scripts/
+
+Sitemap: https://shikin.diggworks.com/sitemap.xml

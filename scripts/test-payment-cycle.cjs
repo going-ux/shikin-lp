@@ -3,6 +3,8 @@
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const out=path.resolve(process.cwd(),process.env.LP_EVIDENCE_DIR||'docs/evidence/implementation-20261016');
+const currentPort=process.env.LP_CURRENT_PORT||'8011',basePort=process.env.LP_BASE_PORT||'8012';
+const currentOrigin='http://127.0.0.1:'+currentPort,baseOrigin='http://127.0.0.1:'+basePort;
 const events=p=>p.evaluate(()=>window.dataLayer.filter(e=>e[0]==='event').map(e=>({name:e[1],fields:e[2]})));
 const count=(entries,name)=>entries.filter(e=>e.name===name).length;
 (async()=>{
@@ -16,7 +18,7 @@ const count=(entries,name)=>entries.filter(e=>e.name===name).length;
  try{
   for(const width of [320,375,390]){
    const result={width};
-   for(const [version,port] of [['before',8012],['after',8011]]){
+   for(const [version,port] of [['before',basePort],['after',currentPort]]){
     const c=await context(width),p=await c.newPage(),errors=[],adRequests=[];p.on('pageerror',e=>errors.push(e.message));
     p.on('request',request=>{const host=new URL(request.url()).hostname;if(host.endsWith('a8.net')||host.endsWith('example.invalid'))adRequests.push(request.url());});
     await p.goto('http://127.0.0.1:'+port+'/?private=do-not-send#top');await p.evaluate(()=>document.fonts.ready);
@@ -64,21 +66,21 @@ const count=(entries,name)=>entries.filter(e=>e.name===name).length;
     }
     assert.equal(errors.length,0);assert.equal(adRequests.length,0);result[version]={layout,pageErrors:errors,adRequests};await c.close();
    }
-   const direct=await context(width),p=await direct.newPage();await p.goto('http://127.0.0.1:8011/#compare');
+   const direct=await context(width),p=await direct.newPage();await p.goto(currentOrigin+'/#compare');
    await p.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
    assert.equal(count(await events(p),'compare_view'),1);assert.equal(count(await events(p),'compare_click'),0);await direct.close();
-   const scrolling=await context(width),scrolled=await scrolling.newPage();await scrolled.goto('http://127.0.0.1:8011/');
+   const scrolling=await context(width),scrolled=await scrolling.newPage();await scrolled.goto(currentOrigin+'/');
    await scrolled.locator('#compare h2').scrollIntoViewIfNeeded();
    await scrolled.waitForFunction(()=>window.dataLayer.some(e=>e[1]==='compare_view'));
    assert.equal(count(await events(scrolled),'compare_view'),1);assert.equal(count(await events(scrolled),'compare_click'),0);await scrolling.close();
-   const nojs=await context(width,{javaScriptEnabled:false}),f=await nojs.newPage();await f.goto('http://127.0.0.1:8011/');
+   const nojs=await context(width,{javaScriptEnabled:false}),f=await nojs.newPage();await f.goto(currentOrigin+'/');
    assert.equal(await f.locator('[data-card]:visible').count(),1);assert.equal(await f.locator('[data-provider]:visible').count(),1);
    assert.equal(await f.locator('[data-provider]:visible').evaluate(e=>e.tagName),'BUTTON');assert.equal(await f.locator('[data-provider]:visible').getAttribute('href'),null);
    await nojs.close();result.directAnchorView=true;result.scrollView=true;result.noJsFallback=true;results.push(result);
   }
   // Current analytics with original multi-provider HTML/config verifies retained behavior.
   const legacy=await context(375);await legacy.route('**/assets/analytics.js',r=>r.fulfill({contentType:'text/javascript',body:fs.readFileSync('assets/analytics.js','utf8')}));
-  const p=await legacy.newPage();await p.goto('http://127.0.0.1:8012/');assert.equal(await p.locator('[data-card]:visible').count(),3);
+  const p=await legacy.newPage();await p.goto(baseOrigin+'/');assert.equal(await p.locator('[data-card]:visible').count(),3);
   await p.locator('[data-type="corporate"]').click();assert.equal(await p.locator('[data-card]:visible').count(),3);
   await p.locator('#more-providers').click();assert.equal(await p.locator('[data-card]:visible').count(),5);
   await p.locator('[data-type="individual"]').click();assert.equal(await p.locator('[data-card]:visible').count(),3);
@@ -86,7 +88,7 @@ const count=(entries,name)=>entries.filter(e=>e.name===name).length;
   await link.click();assert.equal(count(await events(p),'provider_outbound'),1);await legacy.close();
   // Failed config download must not accidentally reveal unreleased records.
   const missing=await context(375);await missing.route('**/assets/config.js',r=>r.abort());
-  const failed=await missing.newPage(),failureErrors=[];failed.on('pageerror',e=>failureErrors.push(e.message));await failed.goto('http://127.0.0.1:8011/');
+  const failed=await missing.newPage(),failureErrors=[];failed.on('pageerror',e=>failureErrors.push(e.message));await failed.goto(currentOrigin+'/');
   assert.equal(await failed.locator('[data-card]:visible').count(),1);
   assert.equal(await failed.locator('.choice').isVisible(),false);
   const url=failed.url();await failed.locator('[data-preview-cta]').click({force:true});assert.equal(failed.url(),url);
