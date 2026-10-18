@@ -119,4 +119,4 @@
 - 利用者依頼によりPR #8でSEO基本設定を追加。canonical・rootのみのsitemap・robots・OG・title/descriptionを整合。本文/CSS/図解/黄色CTAとGA4/CNAME/AGENTSは変更前と一致。
 - A8空枠・previewMode:true・無効CTAを維持。実コード・計測画像・送客・広告を有効化しない。Search Consoleの所有権確認や送信も未実施。
 - PASS: SEO/静的/UI/GA4/JS構文、320/375/390px Chromium、FAQ/内部・固定CTA、停止状態、ローカルHTTP200/配信内容一致。初回の古いサーバー応答失敗から別ポートに切替えて再実行成功。証跡はdocs/seo-release-review-20261018.md。
-- SEO検証用の送客停止版としてレビュー可能と判断。公開後の実配信・GA4実受信・インデックス登録は未確認。mainマージ・本番公開・Google広告・A8稼働なし。Draft解除は操作結果を追記する。
+- SEO検証用の送客停止版としてレビュー可能と判断。公開後の実配信・GA4実受信・インデックス登録は未確認。mainマージ・本番公開・Google広告・A8稼働なし。テスト後に8b28cadをpushし、gh pr readyを通常/権限昇格付きで実行したがAPI403で失敗。WebでもDraft継続を確認。Ready for reviewへの変更は未完了で、利用者による同ボタン操作またはAPI復旧が必要。

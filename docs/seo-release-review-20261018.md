@@ -49,3 +49,10 @@ SEO検証用・送客停止版としてローカルの受け入れ条件は成�
 最終のマージ/公開承認後に、公開rootのHTTP200、canonical/robotsとレスポンスのX-Robots-Tag、robots/sitemapの内容・CNAME/HTTPS・配信版を実確認する。Search Consoleの所有権/権限を確認してsitemap送信・URL検査を行い、GA4の各イベントを実ブラウザ/Realtimeで突合する。今回はDNS変更・所有権確認・送信・インデックス登録要求は実施しない。
 
 構文や設定の成功はSEO順位・インデックス登録・流入を証明しない。現在のページは申込み準備中であり、A8成果や申込みCVRを評価する段階ではない。
+
+
+## Draft解除の実行結果
+
+実装・再テスト結果を8b28cadで作業ブランチへpush後、gh pr ready 8 --repo going-ux/shikin-lpを通常実行と権限昇格付きで試したが、どちらもGitHub GraphQL APIがForbiddenで失敗。Webページも2026-10-18時点でDraftを表示しており、解除成功とは報告しない。
+
+SEO検証用・送客停止版として技術的なレビュー条件は満たしたが、GitHub側のReady状態は未設定。[PR #8](https://github.com/going-ux/shikin-lp/pull/8)の「Ready for review」を利用者が押すか、API経路が利用可能になってから同操作を行う必要がある。これはレビュー開始だけで、mainマージ・本番公開の最終承認とは別。保護ルール・必須レビュー等の最終マージ条件も今回は変更していない。

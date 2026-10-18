@@ -105,4 +105,4 @@ PR #1 は初期案、#2 は未マージのルール案、#3 は比較改善、#4
 
 利用者がPR #8をSEO検証用として公開準備し、問題がなければDraft解除まで進めるよう指示。mainマージ/本番公開は別承認。title/description/canonical/robots/OG/sitemapを整備。本文・デザイン・図解・GA4設定・送客停止は維持。
 
-[最新レビューと再テスト](seo-release-review-20261018.md)。SEO・静的・UI・GA4・320/375/390pxのローカル検証成功。A8条件/実コード未確認はA8稼働のゲートで、今回の送客停止SEO版と区別する。実サイトの配信、GA4実受信、Search Console/インデックス登録・順位・流入は未確認。Draft状態は解除操作の結果を別途記録する。
+[最新レビューと再テスト](seo-release-review-20261018.md)。SEO・静的・UI・GA4・320/375/390pxのローカル検証成功。A8条件/実コード未確認はA8稼働のゲートで、今回の送客停止SEO版と区別する。実サイトの配信、GA4実受信、Search Console/インデックス登録・順位・流入は未確認。Draft解除は通常/権限昇格付きのgh pr readyがAPI403で失敗。WebでもDraft継続を確認。技術的にはレビュー可能と判断したが、GitHub上の解除は未完了で、PR #8のReady for review操作が必要。
