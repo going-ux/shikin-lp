@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-10-26T05:32:01.718Z",
+  "externalRequests": "mocked, zero real A8 clicks",
+  "results": [
+    {
+      "width": 320,
+      "height": 640,
+      "horizontalOverflow": false,
+      "pixelRequests": 1,
+      "mockNavigations": 1,
+      "events": [
+        "cta_click",
+        "provider_outbound"
+      ],
+      "errors": []
+    },
+    {
+      "width": 375,
+      "height": 640,
+      "horizontalOverflow": false,
+      "pixelRequests": 1,
+      "mockNavigations": 1,
+      "events": [
+        "cta_click",
+        "provider_outbound"
+      ],
+      "errors": []
+    },
+    {
+      "width": 390,
+      "height": 640,
+      "horizontalOverflow": false,
+      "pixelRequests": 1,
+      "mockNavigations": 1,
+      "events": [
+        "cta_click",
+        "provider_outbound"
+      ],
+      "errors": []
+    }
+  ],
+  "analyticsFailureNavigation": "PASS",
+  "noJavaScript": "PASS"
+}
