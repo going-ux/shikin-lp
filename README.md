@@ -10,10 +10,6 @@ Chat・Work・Codex 共通の引き継ぎ先はこのリポジトリです。会
 
 本番: https://shikin.diggworks.com/ （GitHub Pages）。GA4 の実装・テスト・デプロイ・本番受信は別々に確認します。
 
-このローカル開発ブランチの単社試作は [実装・検証レポート](docs/implementation-review-20261016.md) を参照。本番には反映していません。
+最新mainはPR #8の単社SEO版とSearch Console確認ファイルを含みます。A8送客は停止中です。
 
-最新の[公開準備レビュー（送客停止）](docs/release-review-20261017.md)に、広告コード設置手順・テスト・PR作成状況・未確認事項を記載しています。
-
-[PR #8 最終レビューと公開までの残課題](docs/pr8-final-review-20261017.md)：Draft・送客停止のままです。
-
-[SEO検証用・送客停止版のレビュー](docs/seo-release-review-20261018.md)：SEO設定と3幅の再テスト。本番公開・mainマージは最終承認後です。
+[QuQuMo A8原文コードの保持・条件確認・テスト](docs/ququmo-a8-review-20261026.md)：原文を不活性templateへ保持し、送客停止のまま検証済み。通常掲載/素材条件は未確認。最新指示により実装準備まで、マージ・公開は行いません。API403でPRは未作成、作業ブランチはpush済みです。

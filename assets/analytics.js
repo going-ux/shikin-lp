@@ -49,6 +49,19 @@
     }
     track(link.dataset.provider?'provider_outbound':'compare_click',{cta_id:link.dataset.track,provider:link.dataset.provider||'none',link_kind:link.dataset.provider?'official':'internal'});
   }));
+  // Delegate from the slot: keep the issued A8 anchor and image attributes intact.
+  const affiliateSlot = document.getElementById('ququmo-affiliate-slot');
+  if (affiliateSlot && affiliateSlot.dataset.status === 'active') {
+    affiliateSlot.addEventListener('click', event => {
+      const link = event.target.closest('a');
+      if (!link || !affiliateSlot.contains(link)) return;
+      const fields = {cta_id:'compare_ququmo', provider:'ququmo', link_kind:'affiliate'};
+      // Neither analytics errors nor blocked Google requests may cancel navigation.
+      for (const name of ['cta_click', 'provider_outbound']) {
+        try { track(name, fields); } catch (_) { /* Leave native anchor navigation intact. */ }
+      }
+    });
+  }
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(config.contactEmail || '')) {
     const contact=document.getElementById('contact');contact.textContent='掲載内容に関するお問い合わせ：';
     const link=document.createElement('a');link.href='mailto:'+config.contactEmail;link.textContent=config.contactEmail;contact.appendChild(link);
