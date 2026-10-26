@@ -13,3 +13,5 @@ Chat・Work・Codex 共通の引き継ぎ先はこのリポジトリです。会
 最新mainはPR #8の単社SEO版とSearch Console確認ファイルを含みます。A8送客は停止中です。
 
 [QuQuMo A8原文コードの保持・条件確認・テスト](docs/ququmo-a8-review-20261026.md)：原文を不活性templateへ保持し、送客停止のまま検証済み。通常掲載/素材条件は未確認。最新指示により実装準備まで、マージ・公開は行いません。API403でPRは未作成、作業ブランチはpush済みです。
+
+[ローカル非公開A/Bプレビューの起動・比較画像](docs/private-preview-20261026.md)：Python 3で起動でき、A8/Googleへ実通信しません。

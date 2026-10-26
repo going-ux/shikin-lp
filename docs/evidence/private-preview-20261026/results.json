@@ -1,0 +1,82 @@
+{
+  "time": "2026-10-26T10:44:14.906Z",
+  "results": [
+    {
+      "mode": "a",
+      "width": 320,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "b",
+      "width": 320,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "a",
+      "width": 375,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "b",
+      "width": 375,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "a",
+      "width": 390,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "b",
+      "width": 390,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "a",
+      "width": 1024,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    },
+    {
+      "mode": "b",
+      "width": 1024,
+      "layout": "PASS",
+      "faq": "PASS",
+      "keyboard": "PASS",
+      "initialPageView": 1,
+      "realExternalRequests": 0
+    }
+  ],
+  "thirdPartyRequests": [],
+  "jsOff": "PASS: both stopped",
+  "analyticsFailure": "PASS: mock navigation",
+  "externalClicks": 0,
+  "applications": 0
+}

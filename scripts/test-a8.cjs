@@ -13,7 +13,7 @@ const pixel='https://www14.a8.net/0.gif?a8mat=4BEFL9+A9Q87U+4JGG+BWVTE';
   for(let n=0;n<40;n++){try{const r=await fetch(origin);if(r.ok)break;}catch{} await new Promise(r=>setTimeout(r,100));}
   browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
   const results=[];
-  const evidence='docs/evidence/a8-link-20261026';fs.mkdirSync(evidence,{recursive:true});
+  const evidence=process.env.LP_A8_EVIDENCE_DIR||'docs/evidence/a8-link-20261026';fs.mkdirSync(evidence,{recursive:true});
   for(const width of [320,375,390]){
    const context=await browser.newContext({viewport:{width,height:640}});
    const requests=[],errors=[];
