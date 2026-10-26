@@ -4,5 +4,5 @@ window.LP_CONFIG = {
   contactEmail: 'info@diggworks.com', // Verified public operator inbox
   pageVersion: '20261026-a8-candidate',
   activeProviders: ['ququmo'], // Other provider records are retained, not approved for display.
-  previewMode: true // Retain the stop for legacy provider controls; the explicit QuQuMo A8 slot is separate.
+  previewMode: true // Keep all visible provider CTAs inactive pending placement/material conditions.
 };

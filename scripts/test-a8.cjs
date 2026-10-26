@@ -30,6 +30,20 @@ const pixel='https://www14.a8.net/0.gif?a8mat=4BEFL9+A9Q87U+4JGG+BWVTE';
    await page.goto(origin+'/__baseline');
    await page.screenshot({path:`${evidence}/before-${width}.png`,fullPage:true});
    await page.goto(origin+'/?private=never-send#top');
+   const stopped=page.locator('[data-preview-cta]');
+   await stopped.click({force:true});
+   assert.equal(requests.filter(u=>u===pixel||u===link).length,0);
+   assert.equal(await page.locator('#ququmo-affiliate-slot > a').count(),0);
+   assert.equal(await page.evaluate(()=>window.dataLayer.filter(e=>e[0]==='event'&&e[1]==='provider_outbound').length),0);
+   await page.screenshot({path:`${evidence}/prepared-${width}.png`,fullPage:true});
+   // Test-only activation, with every third-party request mocked. Source stays pending.
+   await page.route('**/assets/analytics.js',async route=>{
+    const response=await route.fetch();
+    const setup=`const slot=document.getElementById('ququmo-affiliate-slot');const fragment=document.getElementById('ququmo-a8-code').content.cloneNode(true);fragment.querySelector('a').textContent='QuQuMoのサービス内容を確認する';slot.replaceChildren(fragment);slot.dataset.status='active';`;
+    await route.fulfill({response,body:setup+await response.text()});
+   });
+   requests.length=0;
+   await page.reload();
    const events=()=>page.evaluate(()=>window.dataLayer.filter(x=>x[0]==='event').map(x=>({name:x[1],fields:x[2]})));
    assert.equal((await events()).filter(e=>e.name==='page_view').length,1);
    assert.equal(await page.locator('[data-card]:visible').count(),1);
@@ -58,18 +72,18 @@ const pixel='https://www14.a8.net/0.gif?a8mat=4BEFL9+A9Q87U+4JGG+BWVTE';
    assert.deepEqual(observed.map(e=>e.event),['cta_click','provider_outbound']);
    for(const e of observed){assert.equal(e.link_kind,'affiliate');assert.equal(e.cta_id,'compare_ququmo');assert.equal(e.page_location,origin+'/');}
    assert.deepEqual(errors,[]);
-   results.push({width,height:640,horizontalOverflow:false,pixelRequests:1,mockNavigations:1,events:observed.map(e=>e.event),errors});
-   // JS off must keep the same native destination and one pixel.
+   results.push({preparedSource:{status:'pending',adRequests:0,outboundEvents:0},width,height:640,horizontalOverflow:false,pixelRequests:1,mockNavigations:1,events:observed.map(e=>e.event),errors});
+   // The source document must stay stopped with JavaScript disabled.
    const nojs=await browser.newContext({javaScriptEnabled:false,viewport:{width,height:640}});
    await nojs.route('**/*',r=>r.request().url().startsWith(origin+'/')?r.continue():r.fulfill({body:''}));
-   const np=await nojs.newPage();await np.goto(origin);assert.equal(await np.locator('#ququmo-affiliate-slot a').getAttribute('href'),link);await nojs.close();
+   const np=await nojs.newPage();await np.goto(origin);assert.equal(await np.locator('#ququmo-affiliate-slot > a').count(),0);assert.equal(await np.locator('[data-preview-cta]').getAttribute('aria-disabled'),'true');await nojs.close();
    await context.close();
   }
   // A broken analytics queue must not cancel the native anchor click.
   const ctx=await browser.newContext();await ctx.route('**/*',r=>r.request().url().startsWith(origin+'/')?r.continue():r.fulfill({body:'mock'}));
-  const p=await ctx.newPage();await p.goto(origin);await p.evaluate(()=>{window.dataLayer.push=()=>{throw new Error('analytics unavailable')}});
+  const p=await ctx.newPage();await p.route('**/assets/analytics.js',async r=>{const response=await r.fetch();await r.fulfill({response,body:`const slot=document.getElementById('ququmo-affiliate-slot');slot.replaceChildren(document.getElementById('ququmo-a8-code').content.cloneNode(true));slot.dataset.status='active';`+await response.text()});});await p.goto(origin);await p.evaluate(()=>{window.dataLayer.push=()=>{throw new Error('analytics unavailable')}});
   await Promise.all([p.waitForURL(link),p.locator('#ququmo-affiliate-slot a').click()]);await ctx.close();
-  fs.writeFileSync(evidence+'/results.json',JSON.stringify({checkedAt:new Date().toISOString(),externalRequests:'mocked, zero real A8 clicks',results,analyticsFailureNavigation:'PASS',noJavaScript:'PASS'},null,2)+'\n');
-  console.log('PASS A8: 320/375/390, native/keyboard navigation mocked, FAQ/internal/sticky CTA, 1px once, page_view once, CTA/outbound each once, sanitized location, analytics failure and JS-off navigation');
+  fs.writeFileSync(evidence+'/results.json',JSON.stringify({checkedAt:new Date().toISOString(),externalRequests:'mocked, zero real A8 clicks',results,analyticsFailureNavigation:'PASS',noJavaScript:'PASS: source remains stopped'},null,2)+'\n');
+  console.log('PASS A8: 320/375/390, native/keyboard navigation mocked, FAQ/internal/sticky CTA, 1px once, page_view once, CTA/outbound each once, sanitized location, analytics failure navigation and source JS-off stop');
  }finally{if(browser)await browser.close();server.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

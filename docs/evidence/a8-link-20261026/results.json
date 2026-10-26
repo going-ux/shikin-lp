@@ -1,8 +1,13 @@
 {
-  "checkedAt": "2026-10-26T05:32:01.718Z",
+  "checkedAt": "2026-10-26T05:37:29.772Z",
   "externalRequests": "mocked, zero real A8 clicks",
   "results": [
     {
+      "preparedSource": {
+        "status": "pending",
+        "adRequests": 0,
+        "outboundEvents": 0
+      },
       "width": 320,
       "height": 640,
       "horizontalOverflow": false,
@@ -15,6 +20,11 @@
       "errors": []
     },
     {
+      "preparedSource": {
+        "status": "pending",
+        "adRequests": 0,
+        "outboundEvents": 0
+      },
       "width": 375,
       "height": 640,
       "horizontalOverflow": false,
@@ -27,6 +37,11 @@
       "errors": []
     },
     {
+      "preparedSource": {
+        "status": "pending",
+        "adRequests": 0,
+        "outboundEvents": 0
+      },
       "width": 390,
       "height": 640,
       "horizontalOverflow": false,
@@ -40,5 +55,5 @@
     }
   ],
   "analyticsFailureNavigation": "PASS",
-  "noJavaScript": "PASS"
+  "noJavaScript": "PASS: source remains stopped"
 }
